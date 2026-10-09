@@ -11,11 +11,14 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Application State
+    // Application State - session-unique user ID for seamless multi-tab local testing
+    const sessionUserId = sessionStorage.getItem('cr_session_user_id') || ('user_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7));
+    sessionStorage.setItem('cr_session_user_id', sessionUserId);
+
     const state = {
         roomId: localStorage.getItem('cr_room_id') || 'MM SUN 21 42',
         user: {
-            id: localStorage.getItem('cr_user_id') || ('user_' + Math.random().toString(36).substring(2, 9)),
+            id: sessionUserId,
             name: localStorage.getItem('cr_name') || '',
             role: localStorage.getItem('cr_role') || 'runner',
             avatarType: localStorage.getItem('cr_avatar_type') || 'initials',
@@ -35,6 +38,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const locationManager = new LocationManager();
     const mapManager = new MapManager('map');
     const mediaSessionManager = new MediaSessionManager(audioManager);
+
+    // Global Proactive Audio Unlock on any user gesture (essential for mobile Web Audio & Autoplay)
+    const unlockAudioOnTouch = () => {
+        if (audioManager) {
+            audioManager.unlockAudio();
+        }
+    };
+    ['pointerdown', 'touchstart', 'click', 'keydown'].forEach((evt) => {
+        document.addEventListener(evt, unlockAudioOnTouch, { passive: true });
+    });
+
+    // Audio Echo Suppression - Cache signatures of voice notes sent by this device
+    const mySentVoiceSignatures = new Set();
+
+    // Safe Universal Fullscreen Request Helper (activated by user interaction gestures)
+    function requestAppFullscreen() {
+        try {
+            const doc = document.documentElement;
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (doc.requestFullscreen) {
+                    doc.requestFullscreen().catch(() => {});
+                } else if (doc.webkitRequestFullscreen) {
+                    doc.webkitRequestFullscreen();
+                }
+            }
+        } catch (err) {
+            // Silently ignore browser security restrictions
+        }
+    }
 
     // DOM Elements - Profile & Join Modal
     const joinModal = document.getElementById('join-modal');
@@ -805,6 +837,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Wireframe Bottom Navigation Handlers (<, >)
     if (btnBottomPrev) {
         btnBottomPrev.addEventListener('click', () => {
+            requestAppFullscreen();
             if (currentWizardStep > 1) {
                 goToWizardStep(currentWizardStep - 1);
             }
@@ -813,6 +846,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnBottomNext) {
         btnBottomNext.addEventListener('click', () => {
+            requestAppFullscreen();
             if (currentWizardStep === 1) {
                 goToWizardStep(2);
             } else if (currentWizardStep === 2) {
@@ -840,6 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (raceDayPills && raceDayPills.length > 0) {
         raceDayPills.forEach((pill) => {
             pill.addEventListener('click', () => {
+                requestAppFullscreen();
                 raceDayPills.forEach((p) => p.classList.remove('active'));
                 pill.classList.add('active');
                 const room = pill.dataset.room;
@@ -996,8 +1031,14 @@ document.addEventListener('DOMContentLoaded', () => {
         updateProfilePreview();
     }
 
-    if (btnChoiceRunner) btnChoiceRunner.addEventListener('click', () => setRole('runner'));
-    if (btnChoiceCheer) btnChoiceCheer.addEventListener('click', () => setRole('cheer'));
+    if (btnChoiceRunner) btnChoiceRunner.addEventListener('click', () => {
+        requestAppFullscreen();
+        setRole('runner');
+    });
+    if (btnChoiceCheer) btnChoiceCheer.addEventListener('click', () => {
+        requestAppFullscreen();
+        setRole('cheer');
+    });
 
     // ==========================================
     // Screen 3: VIP Segmented Control & Dynamic Trays (Nike / Apple Elite)
@@ -1248,6 +1289,13 @@ document.addEventListener('DOMContentLoaded', () => {
             mapManager.map.invalidateSize();
         }
     });
+
+    const mapContainerEl = document.getElementById('map');
+    if (mapContainerEl) {
+        mapContainerEl.addEventListener('click', () => {
+            requestAppFullscreen();
+        });
+    }
 
     // Connect click-to-target on map markers (toggle: click to target, click again to reset to 'all')
     mapManager.onMarkerClick = (targetUser) => {
@@ -1739,11 +1787,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const audioData = audioManager.lastRecordedAudio;
         if (!audioData) return;
 
+        // Force stop any preview and tear down audio element
         audioManager.stopPreview();
+
+        const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+        mySentVoiceSignatures.add(msgId);
+        if (audioData.base64Audio) {
+            mySentVoiceSignatures.add(audioData.base64Audio.substring(0, 100));
+        }
 
         if (state.ws && state.isConnected) {
             state.ws.send(JSON.stringify({
                 type: 'audio_message',
+                msgId: msgId,
                 roomId: state.roomId,
                 targetUserId: state.selectedTargetUserId,
                 senderId: state.user.id,
@@ -1775,6 +1831,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startPtt(e) {
         if (e) e.preventDefault();
+        requestAppFullscreen();
         if (isVoiceOnCooldown()) return;
         audioManager.startRecording();
     }
@@ -2085,6 +2142,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // WebSocket Client Connection
     // ==========================================
     function connectWebSocket() {
+        if (state.ws && (state.ws.readyState === WebSocket.OPEN || state.ws.readyState === WebSocket.CONNECTING)) {
+            return; // Socket already open or actively connecting - avoid duplicate connections
+        }
+
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}`;
 
@@ -2181,11 +2242,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             case 'audio_message': {
-                // Safeguard: Never play back or duplicate audio sent by myself
-                const isFromMe = (data.sender && (
-                    data.sender.id === state.user.id ||
-                    (data.sender.name && state.user.name && data.sender.name.trim().toLowerCase() === state.user.name.trim().toLowerCase())
-                ));
+                // Safeguard: Never play back voice notes sent by this exact browser tab/device
+                const isFromMe = (
+                    (data.msgId && mySentVoiceSignatures.has(data.msgId)) ||
+                    (data.audio && mySentVoiceSignatures.has(data.audio.substring(0, 100))) ||
+                    (data.sender && data.sender.id === state.user.id)
+                );
 
                 if (isFromMe) {
                     console.log('[AUDIO] Self-voice message received (ignored to prevent echo duplication).');
@@ -2262,6 +2324,24 @@ document.addEventListener('DOMContentLoaded', () => {
             incomingCheerBanner.classList.add('hidden');
             incomingCheerBanner.style.setProperty('display', 'none', 'important');
         }, 1200);
+    };
+
+    audioManager.onAutoplayBlocked = (msg) => {
+        if (incomingCheerBanner) {
+            incomingCheerBanner.classList.remove('hidden');
+            incomingCheerBanner.style.removeProperty('display');
+            if (msg.sender) renderAvatarElement(incomingSenderAvatar, msg.sender);
+            incomingMsgType.textContent = '🔊 Tap to listen (Autoplay Paused)';
+            incomingSenderName.textContent = `${msg.sender?.name || 'Teammate'} sent a voice note!`;
+            
+            const tapToListenHandler = () => {
+                audioManager.unlockAudio();
+                const fallbackAudio = new Audio(msg.audio);
+                fallbackAudio.play().catch(() => {});
+                incomingCheerBanner.removeEventListener('click', tapToListenHandler);
+            };
+            incomingCheerBanner.addEventListener('click', tapToListenHandler, { once: true });
+        }
     };
 
     function addFeedItem(item) {

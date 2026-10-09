@@ -36,6 +36,7 @@ class AudioManager {
         this.onRecordingCancelled = null;
         this.onMessagePlaybackStart = null; // (message)
         this.onMessagePlaybackEnd = null;   // (message)
+        this.onAutoplayBlocked = null;      // (message)
     }
 
     initAudioContext() {
@@ -44,7 +45,17 @@ class AudioManager {
             this.audioCtx = new AudioContext();
         }
         if (this.audioCtx.state === 'suspended') {
-            this.audioCtx.resume();
+            this.audioCtx.resume().catch(() => {});
+        }
+    }
+
+    /**
+     * Proactively unlock audio context on any user touch/click gesture
+     */
+    unlockAudio() {
+        this.initAudioContext();
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume().catch(() => {});
         }
     }
 
@@ -270,7 +281,14 @@ class AudioManager {
 
     stopPreview() {
         if (this.previewAudioEl) {
-            this.previewAudioEl.pause();
+            try {
+                this.previewAudioEl.pause();
+                this.previewAudioEl.currentTime = 0;
+                this.previewAudioEl.src = '';
+                this.previewAudioEl.load();
+            } catch (e) {
+                // Ignore audio reset error
+            }
             this.previewAudioEl = null;
             this.isPreviewPlaying = false;
         }
@@ -309,28 +327,57 @@ class AudioManager {
 
             if (this.onMessagePlaybackStart) this.onMessagePlaybackStart(msg);
 
-            await new Promise((resolve) => {
-                const audio = new Audio(msg.audio);
-                this.currentAudioEl = audio;
-                
-                audio.onended = () => {
-                    this.currentAudioEl = null;
-                    if (this.onMessagePlaybackEnd) this.onMessagePlaybackEnd(msg);
-                    resolve();
-                };
+            // Engine 1: Web Audio API Buffer playback (bypasses mobile HTML5 media element autoplay restrictions once context is running)
+            let playedSuccessfully = false;
+            try {
+                this.initAudioContext();
+                if (this.audioCtx && this.audioCtx.state === 'running' && msg.audio) {
+                    const arrayBuffer = base64ToArrayBuffer(msg.audio);
+                    const audioBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
+                    await new Promise((resolve) => {
+                        const source = this.audioCtx.createBufferSource();
+                        source.buffer = audioBuffer;
+                        source.connect(this.audioCtx.destination);
+                        source.onended = () => {
+                            if (this.onMessagePlaybackEnd) this.onMessagePlaybackEnd(msg);
+                            resolve();
+                        };
+                        source.start(0);
+                    });
+                    playedSuccessfully = true;
+                }
+            } catch (webAudioErr) {
+                console.warn('Web Audio API buffer decode fallback to HTML5 Audio:', webAudioErr);
+            }
 
-                audio.onerror = (e) => {
-                    console.warn('Audio playback error:', e);
-                    this.currentAudioEl = null;
-                    if (this.onMessagePlaybackEnd) this.onMessagePlaybackEnd(msg);
-                    resolve();
-                };
+            // Engine 2: HTML5 Audio element fallback
+            if (!playedSuccessfully) {
+                await new Promise((resolve) => {
+                    const audio = new Audio(msg.audio);
+                    this.currentAudioEl = audio;
+                    
+                    audio.onended = () => {
+                        this.currentAudioEl = null;
+                        if (this.onMessagePlaybackEnd) this.onMessagePlaybackEnd(msg);
+                        resolve();
+                    };
 
-                audio.play().catch((err) => {
-                    console.warn('Auto-play blocked or failed:', err);
-                    resolve();
+                    audio.onerror = (e) => {
+                        console.warn('Audio playback error:', e);
+                        this.currentAudioEl = null;
+                        if (this.onMessagePlaybackEnd) this.onMessagePlaybackEnd(msg);
+                        resolve();
+                    };
+
+                    audio.play().catch((err) => {
+                        console.warn('Auto-play blocked or failed:', err);
+                        this.currentAudioEl = null;
+                        if (this.onAutoplayBlocked) this.onAutoplayBlocked(msg);
+                        if (this.onMessagePlaybackEnd) this.onMessagePlaybackEnd(msg);
+                        resolve();
+                    });
                 });
-            });
+            }
 
             await new Promise((r) => setTimeout(r, 350));
         } catch (err) {
@@ -339,6 +386,20 @@ class AudioManager {
 
         this.processQueue();
     }
+}
+
+/**
+ * Helper to convert Base64 Data URI into ArrayBuffer for Web Audio API
+ */
+function base64ToArrayBuffer(base64DataUri) {
+    const base64 = base64DataUri.includes(',') ? base64DataUri.split(',')[1] : base64DataUri;
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
 }
 
 window.AudioManager = AudioManager;

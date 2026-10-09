@@ -3361,157 +3361,138 @@ body, html {
    ========================================================================== */
 .gate-overlay {
     z-index: 99999 !important;
-    background: rgba(8, 11, 18, 0.94);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-}
-
-.gate-card {
-    max-width: 380px;
-    padding: 32px 24px 24px;
-    background: linear-gradient(180deg, #161e2e 0%, #0e1420 100%);
-    border: 1.5px solid rgba(238, 39, 55, 0.35);
-    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 35px rgba(238, 39, 55, 0.2);
-    text-align: center;
-    align-items: center;
-    gap: 12px;
-}
-
-.gate-emblem-wrap {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: rgba(238, 39, 55, 0.12);
-    border: 2px solid rgba(238, 39, 55, 0.4);
+    background: rgba(8, 12, 20, 0.96);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
-    box-shadow: 0 0 20px rgba(238, 39, 55, 0.3);
-    margin-bottom: 4px;
 }
 
-.gate-title {
+/* Minimal Boxless Gate Container */
+.gate-minimal-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 24px 20px;
+    width: 100%;
+    max-width: 360px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    text-align: center;
+    animation: fadeInGate 0.4s ease forwards;
+}
+
+@keyframes fadeInGate {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* CheerRunners Cinza / quase branco */
+.gate-minimal-brand {
     font-family: 'Days One', sans-serif;
-    font-size: 1.25rem;
-    color: #ffffff;
-    letter-spacing: 0.5px;
+    font-size: 1.85rem;
+    color: #e2e8f0;
+    letter-spacing: -0.5px;
     margin: 0;
+    font-weight: 400;
+    user-select: none;
 }
 
-.gate-subtitle {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    margin-top: -4px;
-    margin-bottom: 12px;
-}
-
-.gate-form {
+.gate-minimal-form {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    gap: 10px;
 }
 
-.gate-input-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.gate-input {
-    width: 100%;
-    background: #090d15;
-    border: 1.5px solid rgba(255, 255, 255, 0.15);
-    border-radius: 14px;
-    color: #ffffff;
-    font-size: 1.05rem;
-    font-weight: 700;
-    padding: 12px 42px 12px 16px;
-    text-align: center;
-    letter-spacing: 2px;
-    transition: all 0.2s ease;
-}
-
-.gate-input:focus {
-    border-color: var(--melb-red);
-    box-shadow: 0 0 14px rgba(238, 39, 55, 0.4);
-    outline: none;
-}
-
-.gate-eye-btn {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.1rem;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
-
-.gate-eye-btn:hover {
-    opacity: 1;
-}
-
-.gate-error-msg {
-    color: #ff4d4f;
-    font-size: 0.78rem;
-    font-weight: 700;
-    background: rgba(255, 77, 79, 0.12);
-    border: 1px solid rgba(255, 77, 79, 0.3);
-    padding: 8px 12px;
-    border-radius: 10px;
-}
-
-.gate-btn {
-    background: var(--melb-red);
-    color: #ffffff;
-    font-size: 1rem;
-    font-weight: 800;
-    padding: 14px;
-    border-radius: 14px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 18px rgba(238, 39, 55, 0.45);
-    transition: all 0.2s ease;
-}
-
-.gate-btn:hover {
-    background: #d81827;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 22px rgba(238, 39, 55, 0.6);
-}
-
-.gate-qr-hint {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px dashed rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-    padding: 10px 14px;
-    font-size: 0.75rem;
-    color: #cbd5e1;
+/* password: (cinza esmaecido) with clean underline input */
+.gate-minimal-field {
     display: flex;
     align-items: center;
-    gap: 8px;
-    text-align: left;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 6px 4px;
+    width: 100%;
+    max-width: 270px;
+    transition: border-color 0.25s ease;
+}
+
+.gate-minimal-field:focus-within {
+    border-bottom-color: rgba(238, 39, 55, 0.65);
+}
+
+.gate-minimal-label {
+    font-size: 0.85rem;
+    color: #64748b; /* Cinza esmaecido */
+    font-family: monospace, sans-serif;
+    letter-spacing: 0.4px;
+    user-select: none;
+}
+
+.gate-minimal-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #cbd5e1;
+    font-size: 1.05rem;
+    font-family: inherit;
+    padding: 2px 4px;
+}
+
+.gate-minimal-input::placeholder {
+    color: #475569;
+    letter-spacing: 2px;
+}
+
+.gate-minimal-submit {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, transform 0.15s;
+}
+
+.gate-minimal-submit svg {
+    color: #64748b;
+    transition: color 0.2s, transform 0.15s;
+}
+
+.gate-minimal-submit:hover svg, .gate-minimal-submit:active svg {
+    color: #ee2737;
+    transform: translateX(2px);
+}
+
+.gate-minimal-submit:hover, .gate-minimal-submit:active {
+    color: #ee2737;
+    transform: translateX(2px);
+}
+
+.gate-minimal-error {
+    font-size: 0.72rem;
+    color: #ef4444;
+    letter-spacing: 0.4px;
     margin-top: 4px;
 }
 
-.gate-pass-link-row {
-    margin-top: 4px;
-}
-
-.gate-pass-link {
-    font-size: 0.76rem;
-    color: #38bdf8;
-    text-decoration: underline;
+/* Melbourne Marathon Festival 2026 (vermelho) */
+.gate-minimal-event {
+    font-size: 0.82rem;
     font-weight: 700;
-    transition: color 0.2s;
-}
-
-.gate-pass-link:hover {
-    color: #7dd3fc;
+    color: #ee2737; /* Vermelho oficial */
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    user-select: none;
 }
 
 @keyframes gateShake {

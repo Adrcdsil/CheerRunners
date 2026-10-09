@@ -12,7 +12,7 @@
     "distance": "42.2km",
     "notes": "Marathon Lead Runner & Coordinator",
     "createdAt": 1728345600000,
-    "lastSeen": 1791468453394
+    "lastSeen": 1791514480766
   },
   {
     "id": "runner_laoana_mendes",
@@ -204,14 +204,14 @@
     "role": "runner",
     "avatarType": "initials",
     "avatarValue": "FG",
-    "avatarColor": "#059669",
-    "defaultRoom": "MM SUN 21 42",
+    "avatarColor": "#ffb703",
+    "defaultRoom": "MM SAT 5 10",
     "email": "gallanttiq@gmail.com",
     "category": "10km – SriLankan Airlines 10km | Saturday",
     "distance": "10km",
     "notes": "Official 10k Runner",
     "createdAt": 1728345600000,
-    "lastSeen": 1791466204663
+    "lastSeen": 1791514704922
   },
   {
     "id": "runner_albert_samson",
@@ -225,7 +225,8 @@
     "category": "10km – SriLankan Airlines 10km | Saturday",
     "distance": "10km",
     "notes": "Official 10k Runner",
-    "createdAt": 1728345600000
+    "createdAt": 1728345600000,
+    "lastSeen": 1791514520463
   },
   {
     "id": "runner_mehak_kaur",

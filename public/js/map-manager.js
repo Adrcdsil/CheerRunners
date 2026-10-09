@@ -357,21 +357,21 @@ class MapManager {
         allRegisteredCourses.forEach((course) => {
             const courseSubGroup = L.layerGroup();
 
-            // Linha suave de referência do percurso (calibrada para 4px com suavidade elegante)
+            // Reference route line (calibrated with 4.5px weight and 0.70 opacity for clear contrast)
             const coreLine = L.polyline(course.coordinates, {
                 color: course.color,
-                weight: 4,
-                opacity: 0.22,
+                weight: 4.5,
+                opacity: 0.70,
                 lineCap: 'round',
                 lineJoin: 'round'
             });
 
-            // Realce interactivo temporário ao passar o rato/tocar
+            // Interactive highlight on hover/touch
             coreLine.on('mouseover', () => {
-                coreLine.setStyle({ opacity: 0.65, weight: 5.5 });
+                coreLine.setStyle({ opacity: 0.95, weight: 6 });
             });
             coreLine.on('mouseout', () => {
-                coreLine.setStyle({ opacity: 0.22, weight: 4 });
+                coreLine.setStyle({ opacity: 0.70, weight: 4.5 });
             });
 
             coreLine.bindTooltip(`

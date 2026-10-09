@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     gateErrorMsg.style.display = 'block';
                     gateErrorMsg.classList.remove('hidden');
                 }
-                const card = accessGateModal ? accessGateModal.querySelector('.gate-card') : null;
+                const card = accessGateModal ? (accessGateModal.querySelector('.gate-minimal-wrap') || accessGateModal.querySelector('.gate-card')) : null;
                 if (card) {
                     card.classList.add('gate-shake');
                     setTimeout(() => card.classList.remove('gate-shake'), 500);

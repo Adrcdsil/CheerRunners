@@ -335,6 +335,38 @@
             </div>
         </div>
 
+        <!-- VIP Access Security Gate Modal (Password: IrizarMM2026 or QR Code Bypass) -->
+        <div id="access-gate-modal" class="modal-overlay gate-overlay hidden" style="display: none !important;">
+            <div class="modal-card gate-card">
+                <div class="gate-emblem-wrap">
+                    <span class="gate-emblem-icon">🔒</span>
+                </div>
+                <h2 class="gate-title">CheerRunners VIP Access</h2>
+                <p class="gate-subtitle">Melbourne Marathon 2026 • Live Arena</p>
+                
+                <form id="gate-form" class="gate-form" onsubmit="return false;">
+                    <div class="gate-input-wrapper">
+                        <input type="password" id="input-access-key" class="form-input gate-input" placeholder="Enter access password" autocomplete="current-password" required>
+                        <button type="button" id="btn-toggle-gate-pwd" class="gate-eye-btn" title="Toggle password visibility">👁️</button>
+                    </div>
+                    <div id="gate-error-msg" class="gate-error-msg hidden" style="display: none;">
+                        Incorrect access password. Please try again.
+                    </div>
+                    <button type="submit" id="btn-unlock-gate" class="btn-submit gate-btn">
+                        <span>Enter Arena ➔</span>
+                    </button>
+                </form>
+                
+                <div class="gate-qr-hint">
+                    <span class="gate-hint-icon">💡</span>
+                    <span>Arriving with the official QR Code? It bypasses password entry automatically!</span>
+                </div>
+                <div class="gate-pass-link-row">
+                    <a href="pass.html" target="_blank" class="gate-pass-link">View Event VIP Pass & QR Code 🎫</a>
+                </div>
+            </div>
+        </div>
+
         <!-- Initial Join & Profile Setup Modal (Clean 3-Screen Mobile Wireframe) -->
         <div id="join-modal" class="modal-overlay">
             <div class="modal-card join-wizard-card">

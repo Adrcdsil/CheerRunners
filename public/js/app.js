@@ -165,6 +165,87 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCloseHud = document.getElementById('btn-close-hud');
 
     // ==========================================
+    // VIP Access Gate Security (Password: IrizarMM2026 or QR Code Bypass)
+    // ==========================================
+    const OFFICIAL_ACCESS_KEY = 'IrizarMM2026';
+    const accessGateModal = document.getElementById('access-gate-modal');
+    const gateForm = document.getElementById('gate-form');
+    const inputAccessKey = document.getElementById('input-access-key');
+    const gateErrorMsg = document.getElementById('gate-error-msg');
+    const btnToggleGatePwd = document.getElementById('btn-toggle-gate-pwd');
+
+    function checkAccessSecurity() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlKey = urlParams.get('key') || urlParams.get('pass') || urlParams.get('access') || urlParams.get('auth');
+        
+        // 1. Automatic 1-tap bypass if scanned via QR Code with valid key
+        if (urlKey && urlKey.trim().toLowerCase() === OFFICIAL_ACCESS_KEY.toLowerCase()) {
+            localStorage.setItem('cr_vip_access_pass', OFFICIAL_ACCESS_KEY);
+            // Clean URL query param without full page refresh
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+
+        // 2. Check stored authorization
+        const isAuthorized = (localStorage.getItem('cr_vip_access_pass') === OFFICIAL_ACCESS_KEY);
+        if (isAuthorized) {
+            if (accessGateModal) {
+                accessGateModal.classList.add('hidden');
+                accessGateModal.style.setProperty('display', 'none', 'important');
+            }
+        } else {
+            if (accessGateModal) {
+                accessGateModal.classList.remove('hidden');
+                accessGateModal.style.removeProperty('display');
+                accessGateModal.style.display = 'flex';
+                setTimeout(() => {
+                    if (inputAccessKey) inputAccessKey.focus();
+                }, 300);
+            }
+        }
+    }
+
+    if (gateForm) {
+        gateForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const entered = (inputAccessKey?.value || '').trim();
+            if (entered.toLowerCase() === OFFICIAL_ACCESS_KEY.toLowerCase()) {
+                localStorage.setItem('cr_vip_access_pass', OFFICIAL_ACCESS_KEY);
+                if (gateErrorMsg) gateErrorMsg.style.display = 'none';
+                if (accessGateModal) {
+                    accessGateModal.classList.add('hidden');
+                    accessGateModal.style.setProperty('display', 'none', 'important');
+                }
+            } else {
+                if (gateErrorMsg) {
+                    gateErrorMsg.style.display = 'block';
+                    gateErrorMsg.classList.remove('hidden');
+                }
+                const card = accessGateModal ? accessGateModal.querySelector('.gate-card') : null;
+                if (card) {
+                    card.classList.add('gate-shake');
+                    setTimeout(() => card.classList.remove('gate-shake'), 500);
+                }
+                if (inputAccessKey) {
+                    inputAccessKey.select();
+                    inputAccessKey.focus();
+                }
+            }
+        });
+    }
+
+    if (btnToggleGatePwd && inputAccessKey) {
+        btnToggleGatePwd.addEventListener('click', () => {
+            const isPwd = inputAccessKey.type === 'password';
+            inputAccessKey.type = isPwd ? 'text' : 'password';
+            btnToggleGatePwd.textContent = isPwd ? '🙈' : '👁️';
+        });
+    }
+
+    // Run security check immediately on boot
+    checkAccessSecurity();
+
+    // ==========================================
     // Fetch & Manage Rooms & Registered Athletes
     // ==========================================
     async function loadRoomsFromApi() {

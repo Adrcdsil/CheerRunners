@@ -3216,5 +3216,174 @@ body, html {
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
 }
 
+/* ==========================================================================
+   VIP Access Gate Security Modal (Password: IrizarMM2026 or QR Code Bypass)
+   ========================================================================== */
+.gate-overlay {
+    z-index: 99999 !important;
+    background: rgba(8, 11, 18, 0.94);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+}
+
+.gate-card {
+    max-width: 380px;
+    padding: 32px 24px 24px;
+    background: linear-gradient(180deg, #161e2e 0%, #0e1420 100%);
+    border: 1.5px solid rgba(238, 39, 55, 0.35);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 35px rgba(238, 39, 55, 0.2);
+    text-align: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.gate-emblem-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(238, 39, 55, 0.12);
+    border: 2px solid rgba(238, 39, 55, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 0 20px rgba(238, 39, 55, 0.3);
+    margin-bottom: 4px;
+}
+
+.gate-title {
+    font-family: 'Days One', sans-serif;
+    font-size: 1.25rem;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.gate-subtitle {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: -4px;
+    margin-bottom: 12px;
+}
+
+.gate-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.gate-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.gate-input {
+    width: 100%;
+    background: #090d15;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 12px 42px 12px 16px;
+    text-align: center;
+    letter-spacing: 2px;
+    transition: all 0.2s ease;
+}
+
+.gate-input:focus {
+    border-color: var(--melb-red);
+    box-shadow: 0 0 14px rgba(238, 39, 55, 0.4);
+    outline: none;
+}
+
+.gate-eye-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.gate-eye-btn:hover {
+    opacity: 1;
+}
+
+.gate-error-msg {
+    color: #ff4d4f;
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: rgba(255, 77, 79, 0.12);
+    border: 1px solid rgba(255, 77, 79, 0.3);
+    padding: 8px 12px;
+    border-radius: 10px;
+}
+
+.gate-btn {
+    background: var(--melb-red);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(238, 39, 55, 0.45);
+    transition: all 0.2s ease;
+}
+
+.gate-btn:hover {
+    background: #d81827;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px rgba(238, 39, 55, 0.6);
+}
+
+.gate-qr-hint {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.75rem;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+    margin-top: 4px;
+}
+
+.gate-pass-link-row {
+    margin-top: 4px;
+}
+
+.gate-pass-link {
+    font-size: 0.76rem;
+    color: #38bdf8;
+    text-decoration: underline;
+    font-weight: 700;
+    transition: color 0.2s;
+}
+
+.gate-pass-link:hover {
+    color: #7dd3fc;
+}
+
+@keyframes gateShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}
+
+.gate-shake {
+    animation: gateShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+
 
 

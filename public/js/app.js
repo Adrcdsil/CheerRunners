@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (accessGateModal) {
                 accessGateModal.classList.remove('hidden');
                 accessGateModal.style.removeProperty('display');
-                accessGateModal.style.display = 'flex';
+                accessGateModal.style.setProperty('display', 'flex', 'important');
                 setTimeout(() => {
                     if (inputAccessKey) inputAccessKey.focus();
                 }, 300);

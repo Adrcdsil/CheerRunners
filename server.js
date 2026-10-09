@@ -18,7 +18,19 @@ const USERS_FILE = path.join(__dirname, 'users.json');
 const CONFIG_FILE = path.join(__dirname, 'config.json');
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Anti-cache middleware for mobile browsers and live clients
+app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+});
+
+app.use(express.static(path.join(__dirname, 'public'), {
+    etag: false,
+    maxAge: 0
+}));
 
 // Helper to load and save config from disk
 function loadConfig() {

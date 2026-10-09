@@ -605,9 +605,9 @@ function broadcastToRoom(roomId, senderId, data, includeSender = false, targetUs
 
     // Group filter: All Runners
     if (targetUserId === 'runners') {
-        room.forEach((client, id) => {
-            const isSender = (id === senderId || (senderWs && client.ws === senderWs));
-            if (client.user.role === 'runner' && (includeSender || !isSender) && client.ws.readyState === WebSocket.OPEN) {
+        room.forEach((client) => {
+            const isSender = (senderWs && client.ws === senderWs);
+            if (client.user && client.user.role === 'runner' && (includeSender || !isSender) && client.ws.readyState === WebSocket.OPEN) {
                 client.ws.send(payload);
             }
         });
@@ -616,31 +616,9 @@ function broadcastToRoom(roomId, senderId, data, includeSender = false, targetUs
 
     // Group filter: Cheer Squad Only
     if (targetUserId === 'cheer') {
-        room.forEach((client, id) => {
-            const isSender = (id === senderId || (senderWs && client.ws === senderWs));
-            if (client.user.role === 'cheer' && (includeSender || !isSender) && client.ws.readyState === WebSocket.OPEN) {
-                client.ws.send(payload);
-            }
-        });
-        return;
-    }
-
-    // Sub-group: All Runners in Room
-    if (targetUserId === 'runners') {
-        room.forEach((client, id) => {
-            const isSender = (id === senderId || (senderWs && client.ws === senderWs) || (client.user && client.user.id === senderId));
-            if ((includeSender || !isSender) && client.user && client.user.role === 'runner' && client.ws.readyState === WebSocket.OPEN) {
-                client.ws.send(payload);
-            }
-        });
-        return;
-    }
-
-    // Sub-group: All Cheer Squad in Room
-    if (targetUserId === 'cheer') {
-        room.forEach((client, id) => {
-            const isSender = (id === senderId || (senderWs && client.ws === senderWs) || (client.user && client.user.id === senderId));
-            if ((includeSender || !isSender) && client.user && client.user.role === 'cheer' && client.ws.readyState === WebSocket.OPEN) {
+        room.forEach((client) => {
+            const isSender = (senderWs && client.ws === senderWs);
+            if (client.user && client.user.role === 'cheer' && (includeSender || !isSender) && client.ws.readyState === WebSocket.OPEN) {
                 client.ws.send(payload);
             }
         });
@@ -649,23 +627,20 @@ function broadcastToRoom(roomId, senderId, data, includeSender = false, targetUs
 
     // Specific Individual User
     if (targetUserId && targetUserId !== 'all') {
-        // If sender accidentally targeted themselves, never send back when includeSender is false
-        if (!includeSender && (targetUserId === senderId || (data.sender && targetUserId === data.sender.id))) {
-            return;
-        }
-        const targetClient = room.get(targetUserId);
-        if (targetClient && targetClient.ws.readyState === WebSocket.OPEN) {
-            if (!includeSender && (targetClient.user.id === senderId || (senderWs && targetClient.ws === senderWs))) {
-                return;
+        room.forEach((client) => {
+            const isSender = (senderWs && client.ws === senderWs);
+            if (client.user && client.user.id === targetUserId) {
+                if ((includeSender || !isSender) && client.ws.readyState === WebSocket.OPEN) {
+                    client.ws.send(payload);
+                }
             }
-            targetClient.ws.send(payload);
-        }
+        });
         return;
     }
 
     // Default: Broadcast to entire room
-    room.forEach((client, id) => {
-        const isSender = (id === senderId || (senderWs && client.ws === senderWs) || (client.user && client.user.id === senderId));
+    room.forEach((client) => {
+        const isSender = (senderWs && client.ws === senderWs);
         if ((includeSender || !isSender) && client.ws.readyState === WebSocket.OPEN) {
             client.ws.send(payload);
         }
@@ -682,15 +657,11 @@ function handleUserJoin(ws, roomId, user) {
 
     const room = rooms.get(cleanRoomId);
 
-    // If user already had an existing open socket in this room, close old socket cleanly
-    if (room.has(userId)) {
-        const oldClient = room.get(userId);
-        if (oldClient && oldClient.ws && oldClient.ws !== ws && oldClient.ws.readyState === WebSocket.OPEN) {
-            try { oldClient.ws.close(1000, 'Replaced by new connection'); } catch (e) {}
-        }
-    }
+    // Assign a unique socket ID so multiple devices/tabs can connect cleanly
+    const socketId = ws.socketId || ('sock_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9));
+    ws.socketId = socketId;
 
-    room.set(userId, {
+    room.set(socketId, {
         ws,
         user: {
             id: user.id,
@@ -720,18 +691,22 @@ function handleUserJoin(ws, roomId, user) {
         saveUsers(registeredUsers);
     }
 
-    // Send room snapshot to the joining user
+    // Send room snapshot to the joining user (deduplicating users by ID for clean roster)
     const existingUsers = [];
+    const seenUserIds = new Set();
     room.forEach((client) => {
-        existingUsers.push({
-            id: client.user.id,
-            name: client.user.name,
-            role: client.user.role,
-            avatarType: client.user.avatarType,
-            avatarValue: client.user.avatarValue,
-            avatarColor: client.user.avatarColor,
-            location: client.lastLocation
-        });
+        if (!seenUserIds.has(client.user.id)) {
+            seenUserIds.add(client.user.id);
+            existingUsers.push({
+                id: client.user.id,
+                name: client.user.name,
+                role: client.user.role,
+                avatarType: client.user.avatarType,
+                avatarValue: client.user.avatarValue,
+                avatarColor: client.user.avatarColor,
+                location: client.lastLocation
+            });
+        }
     });
 
     ws.send(JSON.stringify({
@@ -748,22 +723,32 @@ function handleUserJoin(ws, roomId, user) {
     // Notify everyone else in the room
     broadcastToRoom(cleanRoomId, userId, {
         type: 'user_joined',
-        user: room.get(userId).user
-    }, false);
+        user: room.get(socketId).user
+    }, false, 'all', ws);
 
-    console.log(`[JOIN] "${user.name}" (${user.role}) entered room [${cleanRoomId}]. Total users: ${room.size}`);
+    console.log(`[JOIN] "${user.name}" (${user.role}) entered room [${cleanRoomId}]. Active sockets: ${room.size}`);
 }
 
-function handleUserLeave(roomId, userId) {
-    if (!roomId || !userId || !rooms.has(roomId)) return;
+function handleUserLeave(roomId, socketId, userId) {
+    if (!roomId || !rooms.has(roomId)) return;
     const room = rooms.get(roomId);
-    room.delete(userId);
-    console.log(`[LEAVE] User ${userId} left room [${roomId}]. Remaining: ${room.size}`);
+    if (socketId) {
+        room.delete(socketId);
+    } else if (userId) {
+        room.forEach((client, key) => {
+            if (client.user && client.user.id === userId) room.delete(key);
+        });
+    }
+    console.log(`[LEAVE] Socket ${socketId || userId} left room [${roomId}]. Remaining sockets: ${room.size}`);
 
-    broadcastToRoom(roomId, userId, {
-        type: 'user_left',
-        userId: userId
-    }, false);
+    // Only notify room if no other socket remains for this user ID
+    const hasRemainingSocket = Array.from(room.values()).some((c) => c.user && c.user.id === userId);
+    if (!hasRemainingSocket && userId) {
+        broadcastToRoom(roomId, userId, {
+            type: 'user_left',
+            userId: userId
+        }, false);
+    }
 
     if (room.size === 0) {
         rooms.delete(roomId);
@@ -835,6 +820,7 @@ wss.on('connection', (ws) => {
 
                     const audioPayload = {
                         type: 'audio_message',
+                        clientId: data.clientId,
                         msgId: data.msgId || ('msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7)),
                         sender: {
                             id: effectiveSenderId,
@@ -859,6 +845,7 @@ wss.on('connection', (ws) => {
                     const targetId = data.targetUserId || 'all';
                     broadcastToRoom(currentRoomId, currentUserId, {
                         type: 'quick_reaction',
+                        clientId: data.clientId,
                         sender: {
                             id: currentUserId,
                             name: data.senderName,
@@ -867,7 +854,7 @@ wss.on('connection', (ws) => {
                         targetUserId: targetId,
                         reaction: data.reaction,
                         timestamp: Date.now()
-                    }, true, targetId);
+                    }, false, targetId, ws);
                     break;
                 }
 
@@ -882,8 +869,8 @@ wss.on('connection', (ws) => {
     });
 
     ws.on('close', () => {
-        if (currentRoomId && currentUserId) {
-            handleUserLeave(currentRoomId, currentUserId);
+        if (currentRoomId) {
+            handleUserLeave(currentRoomId, ws.socketId, currentUserId);
         }
     });
 

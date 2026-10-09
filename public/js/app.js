@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             avatarColor: localStorage.getItem('cr_avatar_color') || '#e11d48'
         },
         availableRooms: [],
+        clientId: 'client_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 8),
         selectedTargetUserId: 'all', // 'all' or specific user ID
         users: new Map(), // id -> user object
         ws: null,
@@ -1377,6 +1378,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Start GPS automatically upon login
         locationManager.startTracking();
 
+        // Unlock Web Audio API & preload cheers on user gesture
+        audioManager.unlockAudio();
+        audioManager.preloadAllCheers();
+
         // Initialize Bluetooth headset buttons & WakeLock
         mediaSessionManager.initMediaSession();
         mediaSessionManager.requestWakeLock();
@@ -1819,6 +1824,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.ws && state.isConnected) {
             state.ws.send(JSON.stringify({
                 type: 'audio_message',
+                clientId: state.clientId,
                 msgId: msgId,
                 roomId: state.roomId,
                 targetUserId: state.selectedTargetUserId,
@@ -2065,6 +2071,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (state.ws && state.isConnected) {
                 state.ws.send(JSON.stringify({
                     type: 'quick_reaction',
+                    clientId: state.clientId,
                     roomId: state.roomId,
                     targetUserId: state.selectedTargetUserId,
                     senderName: state.user.name,
@@ -2126,6 +2133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (state.ws && state.isConnected) {
                 state.ws.send(JSON.stringify({
                     type: 'quick_reaction',
+                    clientId: state.clientId,
                     roomId: state.roomId,
                     targetUserId: state.selectedTargetUserId,
                     senderName: state.user.name,
@@ -2264,21 +2272,21 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'audio_message': {
                 // Safeguard: Never play back voice notes sent by this exact browser tab/device
                 const isFromMe = (
+                    (data.clientId && data.clientId === state.clientId) ||
                     (data.msgId && mySentVoiceSignatures.has(data.msgId)) ||
-                    (data.audio && mySentVoiceSignatures.has(data.audio.substring(0, 100))) ||
-                    (data.sender && data.sender.id === state.user.id)
+                    (data.audio && mySentVoiceSignatures.has(data.audio.substring(0, 100)))
                 );
 
                 if (isFromMe) {
-                    console.log('[AUDIO] Self-voice message received (ignored to prevent echo duplication).');
+                    console.log('[AUDIO] Self-voice message received (ignored on originating tab to prevent echo duplication).');
                     break;
                 }
 
                 audioManager.enqueueIncomingMessage(data);
 
                 addFeedItem({
-                    senderName: data.sender.name,
-                    senderRole: data.sender.role,
+                    senderName: data.sender ? data.sender.name : 'Athlete',
+                    senderRole: data.sender ? data.sender.role : 'runner',
                     audio: data.audio,
                     duration: data.duration,
                     isOwn: false
@@ -2287,6 +2295,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             case 'quick_reaction': {
+                if (data.clientId && data.clientId === state.clientId) {
+                    break;
+                }
                 audioManager.playCheerSound(data.reaction);
                 showReactionToast(data);
                 triggerCelebrationConfetti(32);

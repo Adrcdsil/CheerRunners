@@ -29,6 +29,10 @@ class AudioManager {
         this.isPlayingQueue = false;
         this.currentAudioEl = null;
 
+        // Cheer audio buffer cache (Web Audio API)
+        this.cheerBuffers = new Map();
+        this.cheerBuffersLoading = new Map();
+
         // Callbacks
         this.onRecordingProgress = null; // (elapsedMs, remainingMs, pct)
         this.onRecordingReadyForReview = null; // ({ base64Audio, duration })
@@ -44,19 +48,82 @@ class AudioManager {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             this.audioCtx = new AudioContext();
         }
-        if (this.audioCtx.state === 'suspended') {
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
             this.audioCtx.resume().catch(() => {});
         }
     }
 
     /**
      * Proactively unlock audio context on any user touch/click gesture
+     * Plays a 1-sample silent Web Audio buffer to physically open mobile hardware audio route
      */
     unlockAudio() {
         this.initAudioContext();
-        if (this.audioCtx && this.audioCtx.state === 'suspended') {
-            this.audioCtx.resume().catch(() => {});
+        if (this.audioCtx) {
+            if (this.audioCtx.state === 'suspended') {
+                this.audioCtx.resume().catch(() => {});
+            }
+            try {
+                const buffer = this.audioCtx.createBuffer(1, 1, 22050);
+                const source = this.audioCtx.createBufferSource();
+                source.buffer = buffer;
+                source.connect(this.audioCtx.destination);
+                source.start(0);
+            } catch (e) {
+                // Ignore silent unlock error
+            }
         }
+        // Preload cheer audio buffers in background
+        this.preloadAllCheers();
+    }
+
+    /**
+     * Preload and cache decoded AudioBuffers for all cheer sounds
+     */
+    async loadCheerBuffer(url) {
+        if (this.cheerBuffers.has(url)) {
+            return this.cheerBuffers.get(url);
+        }
+        if (this.cheerBuffersLoading.has(url)) {
+            return this.cheerBuffersLoading.get(url);
+        }
+
+        const loadPromise = (async () => {
+            try {
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const arrayBuffer = await resp.arrayBuffer();
+                this.initAudioContext();
+                const audioBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
+                this.cheerBuffers.set(url, audioBuffer);
+                return audioBuffer;
+            } catch (e) {
+                console.warn('Could not decode cheer buffer for:', url, e);
+                return null;
+            } finally {
+                this.cheerBuffersLoading.delete(url);
+            }
+        })();
+
+        this.cheerBuffersLoading.set(url, loadPromise);
+        return loadPromise;
+    }
+
+    preloadAllCheers() {
+        const urls = [
+            '/audio/cheers/go_hard.wav',
+            '/audio/cheers/you_got_this.wav',
+            '/audio/cheers/vamo_porra.wav',
+            '/audio/cheers/go_go_go.wav',
+            '/audio/cheers/just_do_it.wav',
+            '/audio/cheers/rumble.wav',
+            '/audio/cheers/senna.wav',
+            '/audio/cheers/tetra.wav',
+            '/audio/cheers/siuuu.wav'
+        ];
+        urls.forEach((url) => {
+            this.loadCheerBuffer(url).catch(() => {});
+        });
     }
 
     /**
@@ -127,9 +194,13 @@ class AudioManager {
 
     /**
      * High-Fidelity Motivational Voice Cheers (WAV)
+     * Plays through Web Audio API buffer engine (immune to mobile Autoplay restrictions on receiver)
      */
-    playCheerSound(type) {
+    async playCheerSound(type) {
         this.initAudioContext();
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+            try { await this.audioCtx.resume(); } catch (e) {}
+        }
         
         const voiceMap = {
             'gohard': '/audio/cheers/go_hard.wav',
@@ -149,17 +220,34 @@ class AudioManager {
         };
 
         const audioUrl = voiceMap[type];
-        if (audioUrl) {
-            try {
-                const sound = new Audio(audioUrl);
-                sound.volume = 1.0;
-                sound.play().catch((err) => {
-                    console.warn('Cheer sound playback notice:', err);
-                });
+        if (!audioUrl) return;
+
+        // Engine 1: Web Audio API Buffer playback (bypasses browser autoplay restrictions on receiver)
+        try {
+            const buffer = await this.loadCheerBuffer(audioUrl);
+            if (buffer && this.audioCtx) {
+                if (this.audioCtx.state === 'suspended') {
+                    await this.audioCtx.resume().catch(() => {});
+                }
+                const source = this.audioCtx.createBufferSource();
+                source.buffer = buffer;
+                source.connect(this.audioCtx.destination);
+                source.start(0);
                 return;
-            } catch (err) {
-                console.warn('Error playing voice cheer:', err);
             }
+        } catch (bufferErr) {
+            console.warn('Web Audio buffer cheer playback error, falling back:', bufferErr);
+        }
+
+        // Engine 2: HTML5 Audio fallback
+        try {
+            const sound = new Audio(audioUrl);
+            sound.volume = 1.0;
+            sound.play().catch((err) => {
+                console.warn('Cheer sound HTML5 autoplay blocked:', err);
+            });
+        } catch (err) {
+            console.warn('Error playing voice cheer fallback:', err);
         }
     }
 
@@ -323,6 +411,12 @@ class AudioManager {
         const msg = this.playbackQueue.shift();
 
         try {
+            // Proactively resume AudioContext for receiver playback
+            this.initAudioContext();
+            if (this.audioCtx && this.audioCtx.state === 'suspended') {
+                try { await this.audioCtx.resume(); } catch (e) {}
+            }
+
             await this.playAlertChime();
 
             if (this.onMessagePlaybackStart) this.onMessagePlaybackStart(msg);
@@ -331,6 +425,9 @@ class AudioManager {
             let playedSuccessfully = false;
             try {
                 this.initAudioContext();
+                if (this.audioCtx && this.audioCtx.state === 'suspended') {
+                    try { await this.audioCtx.resume(); } catch (e) {}
+                }
                 if (this.audioCtx && this.audioCtx.state === 'running' && msg.audio) {
                     const arrayBuffer = base64ToArrayBuffer(msg.audio);
                     const audioBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);

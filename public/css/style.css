@@ -1,0 +1,3220 @@
+/* ==========================================================================
+   CheerRunners - Melbourne Marathon Festival Theme (UK English UI)
+   Official Nike Running Aesthetics: Signature Race Red & Deep Carbon Asphalt
+   ========================================================================== */
+
+:root {
+    --bg-main: #0c0e12;
+    --bg-card: rgba(18, 22, 30, 0.92);
+    --bg-card-border: rgba(255, 255, 255, 0.12);
+    --text-primary: #ffffff;
+    --text-muted: #9ca3af;
+    
+    /* Official Melbourne Marathon / Nike Running Palette */
+    --melb-red: #ee2737;          /* Signature Nike Race Red */
+    --melb-dark-red: #c01424;     /* Deep Athletic Red */
+    --melb-carbon: #11141a;       /* Dark Track Asphalt */
+    --melb-gold: #f59e0b;         /* Finish Line Gold */
+    --melb-green: #22c55e;        /* Pace Split Green */
+    --melb-cyan: #38bdf8;         /* Distance Sky Blue */
+    --danger-red: #ee2737;
+    
+    /* Backward compatibility aliases */
+    --runner-accent: var(--melb-red);
+    --runner-glow: rgba(238, 39, 55, 0.4);
+    --cheer-accent: var(--melb-red);
+    --cheer-glow: rgba(238, 39, 55, 0.4);
+    --gold-accent: var(--melb-red);
+    --gold-glow: rgba(238, 39, 55, 0.35);
+    --emerald-accent: var(--melb-green);
+    --cyan-accent: var(--melb-cyan);
+    --purple-accent: #a855f7;
+    --runner-neon: var(--runner-accent);
+    --cheer-vibrant: var(--cheer-accent);
+    --accent-lime: var(--emerald-accent);
+    
+    --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+*::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: var(--font-stack);
+}
+
+#app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Floating Mobile Header Island - Melbourne Marathon Race Command
+   ========================================================================== */
+.floating-header-island {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    height: 50px;
+    background: rgba(17, 22, 34, 0.78);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    z-index: 1000;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+    pointer-events: auto;
+}
+
+.header-functional-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.header-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.online {
+    background: rgba(34, 197, 94, 0.18);
+    color: var(--melb-green);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.status-badge.offline {
+    background: rgba(238, 39, 55, 0.18);
+    color: var(--melb-red);
+    border: 1px solid rgba(238, 39, 55, 0.4);
+}
+
+.room-pill {
+    background: rgba(238, 39, 55, 0.15);
+    border: 1px solid rgba(238, 39, 55, 0.45);
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 14px;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+}
+
+.room-pill svg {
+    color: var(--melb-red);
+}
+
+.room-pill:hover, .room-pill:active {
+    background: rgba(238, 39, 55, 0.3);
+    border-color: var(--melb-red);
+    transform: scale(1.02);
+}
+
+.header-admin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(238, 39, 55, 0.15);
+    border: 1px solid rgba(238, 39, 55, 0.45);
+    color: #ffffff;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 6px 11px;
+    border-radius: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.header-admin-link:hover {
+    background: rgba(238, 39, 55, 0.35);
+    border-color: var(--melb-red);
+    box-shadow: 0 0 10px rgba(238, 39, 55, 0.4);
+    transform: translateY(-1px);
+    color: #ffffff;
+}
+
+.header-admin-link svg {
+    color: var(--melb-red);
+}
+
+.header-avatar-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--melb-red), var(--melb-dark-red));
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 900;
+    cursor: pointer;
+    overflow: hidden;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 12px rgba(238, 39, 55, 0.5);
+    transition: transform 0.15s;
+}
+
+.header-avatar-badge:active {
+    transform: scale(0.92);
+}
+
+.header-avatar-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ==========================================================================
+   Map Area - Edge-to-Edge Full Screen
+   ========================================================================== */
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: #0c0e12;
+}
+
+#map .leaflet-tile-pane {
+    filter: grayscale(100%) contrast(100%) brightness(96%);
+    -webkit-filter: grayscale(100%) contrast(100%) brightness(96%);
+}
+
+/* Floating Metrics Bar (Runner Speed & Pace) - Melbourne Track Design */
+.metrics-overlay {
+    position: absolute;
+    top: 76px;
+    left: 12px;
+    right: 12px;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.stats-grid {
+    background: rgba(18, 22, 30, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--bg-card-border);
+    border-radius: 20px;
+    padding: 8px 14px 10px 14px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+    pointer-events: auto;
+}
+
+.stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    align-items: center;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 2px 4px;
+}
+
+.stat-item-highlight {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+
+.stat-val {
+    font-size: 1.3rem;
+    font-weight: 900;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    color: #ffffff;
+}
+
+#stat-distance {
+    color: #ffffff;
+}
+
+#stat-pace {
+    color: var(--melb-green); /* Split pace in energetic race green */
+}
+
+#stat-speed {
+    color: var(--melb-cyan);
+}
+
+.eta-card {
+    background: rgba(238, 39, 55, 0.18);
+    border: 1.5px solid rgba(238, 39, 55, 0.45);
+    backdrop-filter: blur(14px);
+    padding: 8px 14px;
+    border-radius: 14px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: auto;
+    color: #ffffff;
+}
+
+.eta-card strong {
+    color: #ffa3ac;
+}
+
+/* Floating Map Buttons */
+.map-actions {
+    position: absolute;
+    right: 14px;
+    bottom: 295px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 500;
+}
+
+.btn-float {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(18, 22, 30, 0.90);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--bg-card-border);
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s, background 0.2s, border-color 0.2s;
+}
+
+.btn-float:active {
+    transform: scale(0.92);
+}
+
+.btn-float.active {
+    border-color: var(--melb-red);
+    color: var(--melb-red);
+    box-shadow: 0 0 14px rgba(238, 39, 55, 0.5);
+}
+
+/* Course Selector Floating Speed-Dial */
+.course-dial-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.course-dial-options {
+    position: absolute;
+    right: 52px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    z-index: 510;
+    transition: opacity 0.22s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: auto;
+}
+
+.course-dial-options.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(18px) scale(0.92);
+}
+
+.btn-dial-choice {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(18, 22, 30, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(255, 255, 255, 0.16);
+    color: #94a3b8;
+    font-size: 0.72rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    transition: all 0.18s ease;
+    user-select: none;
+}
+
+.btn-dial-choice:active {
+    transform: scale(0.9);
+}
+
+/* Distinct Course Theme Glows on Active (Official Melbourne Marathon Bib Colors) */
+.btn-dial-choice.active[data-course="5k"] {
+    border-color: #00b4d8;
+    color: #00b4d8;
+    background: rgba(0, 180, 216, 0.22);
+    box-shadow: 0 0 12px rgba(0, 180, 216, 0.55);
+    transform: scale(1.06);
+}
+
+.btn-dial-choice.active[data-course="10k"] {
+    border-color: #22c55e;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.22);
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.55);
+    transform: scale(1.06);
+}
+
+.btn-dial-choice.active[data-course="21k"] {
+    border-color: #cbd5e1;
+    color: #ffffff;
+    background: rgba(148, 163, 184, 0.28);
+    box-shadow: 0 0 12px rgba(203, 213, 225, 0.6);
+    transform: scale(1.06);
+}
+
+.btn-dial-choice.active[data-course="42k"] {
+    border-color: #ff0038;
+    color: #ff0038;
+    background: rgba(255, 0, 56, 0.22);
+    box-shadow: 0 0 14px rgba(255, 0, 56, 0.6);
+    transform: scale(1.06);
+}
+
+#btn-toggle-courses.active {
+    border-color: #ff0038;
+    color: #ff0038;
+    box-shadow: 0 0 14px rgba(255, 0, 56, 0.5);
+}
+
+/* Demo GPS Simulation Button: Grey OFF, Red ON */
+#btn-toggle-sim {
+    background: rgba(30, 41, 59, 0.85);
+    border: 1.5px solid rgba(148, 163, 184, 0.35);
+    color: #94a3b8;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#btn-toggle-sim svg {
+    color: #94a3b8;
+    transition: color 0.2s ease, transform 0.25s ease;
+}
+
+#btn-toggle-sim:hover {
+    background: rgba(51, 65, 85, 0.95);
+    border-color: rgba(203, 213, 225, 0.5);
+    color: #cbd5e1;
+    transform: scale(1.08);
+}
+
+#btn-toggle-sim:hover svg {
+    color: #ffffff;
+}
+
+#btn-toggle-sim.active {
+    background: linear-gradient(135deg, #ee2737, #be123c);
+    border-color: #ff4d6d;
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(238, 39, 55, 0.85), 0 4px 14px rgba(0, 0, 0, 0.5);
+    animation: gpsActivePulse 2s infinite ease-in-out;
+}
+
+#btn-toggle-sim.active svg {
+    color: #ffffff;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+}
+
+@keyframes gpsActivePulse {
+    0%, 100% { box-shadow: 0 0 14px rgba(238, 39, 55, 0.6); transform: scale(1); }
+    50% { box-shadow: 0 0 24px rgba(238, 39, 55, 0.95); transform: scale(1.06); }
+}
+
+/* Bottom Walkie-Talkie & Control Panel - Transparent & Floating over Map */
+.bottom-dock {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    background: transparent;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    z-index: 500;
+}
+
+/* Recipient Selector Chips Bar */
+.recipient-bar-container {
+    width: auto;
+    max-width: 92vw;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(15, 20, 30, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3px 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    pointer-events: auto;
+    overflow-x: auto;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+.recipient-bar-container::-webkit-scrollbar {
+    display: none;
+}
+
+.recipient-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.recipient-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+.recipient-chips::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.recipient-chip {
+    background: #151b27;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease-in-out;
+}
+
+.recipient-chip:hover {
+    background: #1b2333;
+    color: #ffffff;
+    border-color: rgba(225, 29, 72, 0.4);
+}
+
+.recipient-chip.active {
+    background: rgba(225, 29, 72, 0.16);
+    border-color: #e11d48;
+    color: #ffffff;
+    font-weight: 800;
+    box-shadow: 0 0 12px rgba(225, 29, 72, 0.28);
+}
+
+.recipient-chip.chip-direct.active {
+    background: rgba(225, 29, 72, 0.16);
+    border-color: #e11d48;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(225, 29, 72, 0.28);
+}
+
+.recipient-chip .chip-avatar-mini {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 900;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.recipient-chip .chip-avatar-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Post-Recording Review Action Bar */
+.review-bar {
+    width: 100%;
+    max-width: 440px;
+    background: rgba(18, 22, 30, 0.96);
+    border: 1.5px solid var(--melb-red);
+    box-shadow: 0 0 25px rgba(238, 39, 55, 0.4);
+    border-radius: 18px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: bounceIn 0.25s ease-out;
+    pointer-events: auto; /* CRITICAL FIX: restores clicking on Listen, Discard, and Send */
+    z-index: 510;
+}
+
+.review-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--melb-red);
+}
+
+.review-pulse-icon {
+    animation: pulseIcon 0.8s infinite alternate;
+}
+
+.review-duration {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--melb-red);
+}
+
+.review-actions {
+    display: flex;
+    gap: 6px;
+    pointer-events: auto;
+}
+
+.btn-review {
+    border: none;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: transform 0.1s, opacity 0.15s;
+    pointer-events: auto;
+}
+
+.btn-review:active {
+    transform: scale(0.94);
+}
+
+.btn-review.secondary {
+    background: #2d3748;
+    color: #ffffff;
+}
+
+.btn-review.danger {
+    background: rgba(238, 39, 55, 0.2);
+    color: var(--melb-red);
+    border: 1px solid rgba(238, 39, 55, 0.4);
+}
+
+.btn-review.primary {
+    background: linear-gradient(135deg, var(--melb-red), var(--melb-dark-red));
+    color: #ffffff;
+    font-weight: 900;
+}
+
+/* ==========================================================================
+/* ==========================================================================
+   Ergonomic Flanking Controls Row (Presets flanking circular PTT button)
+   ========================================================================== */
+.dock-controls-row {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.sound-flank {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+}
+
+.sound-flank-left {
+    justify-content: flex-end;
+}
+
+.sound-flank-right {
+    justify-content: flex-start;
+}
+
+/* Modern Frosted Glass Floating Sound Preset Buttons (Flat athletic icons) */
+.btn-sound-mini, .btn-soundboard {
+    flex: 1;
+    min-width: 54px;
+    max-width: 92px;
+    height: 64px;
+    background: rgba(17, 22, 34, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+    transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    padding: 6px 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-sound-mini:hover, .btn-soundboard:hover {
+    transform: translateY(-2px);
+    background: rgba(26, 34, 52, 0.85);
+    border-color: rgba(225, 29, 72, 0.6);
+    box-shadow: 0 10px 24px rgba(225, 29, 72, 0.28);
+}
+
+.btn-sound-mini:active, .btn-soundboard:active {
+    transform: scale(0.94);
+    background: rgba(225, 29, 72, 0.22);
+    border-color: #e11d48;
+}
+
+.sound-flat-icon {
+    width: 22px;
+    height: 22px;
+    color: #fb7185;
+    fill: currentColor;
+    filter: drop-shadow(0 0 6px rgba(225, 29, 72, 0.4));
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+}
+
+.btn-sound-mini:active .sound-flat-icon,
+.btn-soundboard:active .sound-flat-icon {
+    transform: scale(1.18);
+}
+
+.btn-sound-mini .soundboard-title,
+.btn-soundboard .soundboard-title {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    color: #f1f5f9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Soundboard Preset Dropdown & Popover Menu */
+.preset-dropdown-container {
+    position: relative;
+    flex: 1;
+    min-width: 54px;
+    max-width: 92px;
+    height: 64px;
+    display: flex;
+}
+
+.preset-dropdown-container .sound-preset-dropdown {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.preset-chevron {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    font-size: 0.6rem;
+    color: var(--runner-neon);
+    opacity: 0.85;
+    transition: transform 0.2s ease;
+}
+
+.preset-dropdown-container.menu-open .preset-chevron {
+    transform: rotate(180deg);
+}
+
+.preset-menu-popover {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    right: 0;
+    min-width: 236px;
+    background: rgba(14, 18, 27, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(225, 29, 72, 0.45);
+    border-radius: 16px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), 0 0 24px rgba(225, 29, 72, 0.25);
+    padding: 8px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popoverFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.preset-menu-header {
+    font-size: 0.62rem;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    color: var(--melb-red);
+    padding: 2px 8px 6px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.preset-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid transparent;
+    color: #ffffff;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+}
+
+.preset-menu-item:hover {
+    background: rgba(225, 29, 72, 0.2);
+    border-color: rgba(225, 29, 72, 0.5);
+    transform: translateX(-2px);
+}
+
+.preset-menu-item:active {
+    transform: scale(0.96);
+}
+
+.preset-menu-item.active {
+    background: rgba(225, 29, 72, 0.16);
+    border-color: rgba(225, 29, 72, 0.4);
+}
+
+.preset-item-emoji {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.preset-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.preset-item-name {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preset-item-desc {
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   PTT Walkie-Talkie Button - Official Nike Melbourne Marathon Red Hero
+   ========================================================================== */
+.ptt-container {
+    position: relative;
+    width: 86px;
+    height: 86px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 2px;
+}
+
+.ptt-pulse-halo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(238, 39, 55, 0.35) 0%, rgba(238, 39, 55, 0) 70%);
+    animation: pttBreathing 2.4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pttBreathing {
+    0%, 100% { transform: scale(0.92); opacity: 0.5; }
+    50% { transform: scale(1.22); opacity: 0.9; }
+}
+
+.ptt-svg-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    pointer-events: none;
+}
+
+.ptt-svg-ring circle {
+    fill: none;
+    stroke-width: 4.5;
+    stroke-linecap: round;
+}
+
+.ring-bg {
+    stroke: rgba(255, 255, 255, 0.12);
+}
+
+.ring-progress {
+    stroke: url(#talkLoaderGrad);
+    stroke-dasharray: 282.74;
+    stroke-dashoffset: 282.74;
+    transition: stroke-dashoffset 0.05s linear;
+    filter: drop-shadow(0 0 6px rgba(255, 45, 85, 0.95)) drop-shadow(0 0 14px rgba(238, 39, 55, 0.7));
+    opacity: 0;
+    transition: opacity 0.2s ease, stroke-dashoffset 0.05s linear;
+}
+
+.ptt-container.recording .ring-progress {
+    opacity: 1;
+}
+
+/* 360-degree rotating loader animation during PTT recording */
+.ptt-container.recording .ptt-svg-ring {
+    animation: pttRingSpin 1.8s linear infinite;
+}
+
+@keyframes pttRingSpin {
+    0% { transform: rotate(-90deg); }
+    100% { transform: rotate(270deg); }
+}
+
+/* Fortnite Ability Ring Loader (30s Cooldown) */
+.ring-cheer-cooldown {
+    stroke: url(#fortniteCooldownGrad);
+    stroke-dasharray: 282.7;
+    stroke-dashoffset: 282.7;
+    transition: stroke-dashoffset 0.06s linear;
+    filter: drop-shadow(0 0 6px rgba(0, 242, 254, 0.95)) drop-shadow(0 0 14px rgba(56, 189, 248, 0.65));
+    opacity: 0;
+    transition: opacity 0.2s ease, stroke-dashoffset 0.06s linear;
+}
+
+.ptt-container.cheer-charging .ring-cheer-cooldown {
+    opacity: 1;
+}
+
+/* Floating High-Contrast Fortnite Cooldown Pill (Hidden: pure circular loader) */
+.cheer-cooldown-badge {
+    display: none !important;
+}
+
+/* Sound Buttons Cooldown State (Anti-Flood Shield) */
+.btn-soundboard.on-cooldown,
+.preset-menu-item.on-cooldown {
+    opacity: 0.35 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    filter: grayscale(0.6) brightness(0.75);
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Cooldown Completion Flash Burst */
+.ptt-container.cooldown-ready-burst .ptt-pulse-halo {
+    animation: readyFlashBurst 0.65s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+@keyframes readyFlashBurst {
+    0% {
+        transform: scale(0.9);
+        background: radial-gradient(circle, rgba(0, 242, 254, 0.9) 0%, rgba(56, 189, 248, 0.4) 50%, rgba(0, 242, 254, 0) 75%);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.6);
+        background: radial-gradient(circle, rgba(0, 242, 254, 0) 0%, rgba(56, 189, 248, 0.75));
+        opacity: 0;
+    }
+}
+
+/* Voice Cooldown (2s PTT safety) */
+.btn-ptt.voice-cooldown {
+    opacity: 0.65;
+    pointer-events: none;
+    filter: grayscale(0.4);
+}
+
+.btn-ptt {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ee2737, #be123c);
+    border: 2.5px solid #ffffff;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(238, 39, 55, 0.6);
+    position: relative;
+    z-index: 2;
+    transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease;
+    touch-action: none;
+    pointer-events: auto;
+}
+
+.btn-ptt .ptt-mic-icon {
+    width: 34px;
+    height: 34px;
+    color: #ffffff;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.45));
+    transition: transform 0.15s ease;
+}
+
+.btn-ptt:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(238, 39, 55, 0.8);
+}
+
+.btn-ptt:active, .btn-ptt.recording {
+    background: linear-gradient(135deg, #a50d1b, #7d0813);
+    border-color: #ffffff;
+    box-shadow: 0 0 35px rgba(238, 39, 55, 0.95);
+    transform: scale(1.08);
+}
+
+.btn-ptt.recording .ptt-mic-icon {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 10px #ffffff);
+}
+
+.btn-ptt .ptt-label,
+.btn-ptt .ptt-timer {
+    display: none !important;
+}
+
+.dock-footer-info {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+/* Incoming Banner - Melbourne Marathon Alert */
+.incoming-cheer-banner {
+    position: absolute;
+    top: 140px;
+    left: 20px;
+    right: 20px;
+    background: rgba(18, 22, 30, 0.96);
+    backdrop-filter: blur(20px);
+    border: 1.5px solid var(--melb-red);
+    color: #ffffff;
+    padding: 12px 18px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 10px 32px rgba(238, 39, 55, 0.4);
+    z-index: 1200;
+    animation: bounceIn 0.3s ease-out;
+}
+
+.incoming-avatar-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--melb-red);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 900;
+    overflow: hidden;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 8px rgba(238, 39, 55, 0.5);
+}
+
+.incoming-avatar-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.incoming-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.incoming-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--melb-red);
+}
+
+.incoming-sender {
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   Map Runner HUD Card Marker Styles - Melbourne Marathon Athletics
+   ========================================================================== */
+.map-hud-marker-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+    cursor: pointer;
+    width: 154px;
+    transition: transform 0.15s ease-out;
+}
+
+.map-hud-marker-container:hover {
+    transform: scale(1.05);
+    z-index: 1000;
+}
+
+/* Crown Avatar: Maior e em destaque acima */
+.hud-crown-avatar-wrapper {
+    position: relative;
+    z-index: 4;
+    margin-bottom: -22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-crown-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #182030;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 16px rgba(238, 39, 55, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #ffffff;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.map-hud-marker-container:hover .hud-crown-avatar {
+    transform: scale(1.08);
+}
+
+.hud-crown-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Quadrinho / Card do Atleta */
+.map-runner-hud-card {
+    background: rgba(15, 23, 42, 0.94);
+    backdrop-filter: blur(12px);
+    border-radius: 14px;
+    padding: 24px 8px 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    border: 1.5px solid var(--melb-red);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+}
+
+.hud-card-runner {
+    border-color: var(--melb-red);
+    box-shadow: 0 0 16px rgba(238, 39, 55, 0.35);
+}
+
+.hud-card-cheer {
+    border-color: #ffffff;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
+}
+
+/* Targeted marker when direct 1-to-1 messaging is active */
+.map-hud-marker-container.is-targeted {
+    z-index: 1500 !important;
+}
+
+.map-hud-marker-container.is-targeted .map-runner-hud-card {
+    border-color: var(--melb-red) !important;
+    box-shadow: 0 0 25px rgba(238, 39, 55, 0.8), 0 0 45px rgba(238, 39, 55, 0.4) !important;
+    animation: targetPulse 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes targetPulse {
+    0% {
+        box-shadow: 0 0 16px rgba(238, 39, 55, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 30px rgba(238, 39, 55, 0.95), 0 0 45px rgba(238, 39, 55, 0.5);
+    }
+}
+
+.hud-target-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: var(--melb-red);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 900;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(238, 39, 55, 0.7);
+    border: 1.5px solid #ffffff;
+    z-index: 5;
+}
+
+.hud-card-name {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1.2;
+}
+
+/* Linha de Métricas Direta (Sem Legendas) */
+.hud-metrics-direct {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 3px 8px;
+    margin-top: 2px;
+    white-space: nowrap !important;
+    flex-wrap: nowrap !important;
+    max-width: 100%;
+}
+
+.hud-metrics-direct .hud-metric-val {
+    font-size: 0.76rem;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+
+.hud-metrics-direct .highlight-dist {
+    color: #ffffff;
+}
+
+.hud-metrics-direct .highlight-pace {
+    color: #39ff14;
+}
+
+.hud-metric-dot {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.7rem;
+}
+
+.hud-cheer-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.highlight-dist {
+    color: #ffffff;
+}
+
+.highlight-pace {
+    color: var(--melb-green);
+}
+
+.highlight-spd {
+    color: var(--melb-cyan);
+}
+
+.hud-pointer-arrow {
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 8px solid rgba(18, 22, 30, 0.94);
+    margin-top: -1px;
+    z-index: 2;
+}
+
+.hud-marker-pulse {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--melb-red);
+    box-shadow: 0 0 14px var(--melb-red);
+    animation: radarPulse 1.8s infinite;
+    z-index: 1;
+}
+
+.map-hud-marker-container.cheer .hud-marker-pulse {
+    background: #ffffff;
+    box-shadow: 0 0 14px #ffffff;
+}
+
+/* ==========================================================================
+   Modals & Room Management - Melbourne Marathon High-Contrast Card
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 12, 16, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 2000;
+    overflow-y: auto;
+}
+
+.modal-card {
+    background: #111622;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+}
+
+.modal-card::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.modal-header h2 {
+    font-size: 1.35rem;
+    font-weight: 900;
+    margin-bottom: 3px;
+    color: #ffffff;
+}
+
+.modal-header p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.modal-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.btn-admin-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(238, 39, 55, 0.15);
+    border: 1px solid rgba(238, 39, 55, 0.5);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-admin-pill:hover {
+    background: rgba(238, 39, 55, 0.35);
+    border-color: #ee2737;
+    box-shadow: 0 0 14px rgba(238, 39, 55, 0.5);
+    transform: translateY(-1px);
+    color: #ffffff;
+}
+
+.btn-admin-pill svg {
+    color: #ee2737;
+}
+
+.profile-preview-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.avatar-badge-large {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 900;
+    background: #ee2737;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 16px rgba(238, 39, 55, 0.4);
+    color: #ffffff;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-preview-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.preview-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 3px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(225, 29, 72, 0.12);
+    border: 1px solid rgba(225, 29, 72, 0.3);
+    color: #fb7185;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: fit-content;
+}
+
+/* Rooms Grid */
+.rooms-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+    max-height: 230px;
+    overflow-y: auto;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+.rooms-grid::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.room-card {
+    background: #151b27;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.room-card:hover {
+    border-color: rgba(225, 29, 72, 0.4);
+    background: #1b2333;
+}
+
+.room-card.active {
+    border-color: #e11d48;
+    background: rgba(225, 29, 72, 0.12);
+    box-shadow: 0 0 16px rgba(225, 29, 72, 0.25);
+}
+
+.room-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.room-card-title {
+    font-size: 0.92rem;
+    font-weight: 900;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.room-card.active .room-card-title {
+    color: #ffffff;
+}
+
+.room-card-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.room-card-badge {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+}
+
+.room-card.active .room-card-badge {
+    background: var(--melb-red);
+    color: #ffffff;
+}
+
+.btn-create-room-toggle {
+    background: transparent;
+    border: 1.5px dashed var(--bg-card-border);
+    color: var(--melb-red);
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    margin-top: 4px;
+}
+
+.btn-create-room-toggle:hover {
+    border-color: var(--melb-red);
+    background: rgba(238, 39, 55, 0.1);
+}
+
+.create-room-box {
+    background: #1c2230;
+    border: 1px solid rgba(238, 39, 55, 0.3);
+    padding: 12px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* ==========================================================================
+   Avatar Tabs, Colour Theme Swatches & Dropdown Picker
+   ========================================================================== */
+.avatar-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    background: #1c2230;
+    padding: 4px;
+    border-radius: 12px;
+}
+
+.btn-tab {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 7px 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+}
+
+.btn-tab.active {
+    background: var(--melb-red);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-tab-content {
+    margin-top: 8px;
+}
+
+.color-palette-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.color-palette-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    align-items: center !important;
+    padding: 4px 0 !important;
+}
+
+.btn-color-dot {
+    display: inline-block !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    border: 3px solid transparent !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+    outline: none !important;
+}
+
+.btn-color-dot:hover {
+    transform: scale(1.15) !important;
+}
+
+.btn-color-dot.active {
+    border-color: #ffffff !important;
+    transform: scale(1.22) !important;
+    box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px #ffffff, 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.avatar-dropdown-wrapper {
+    margin-top: 6px;
+}
+
+.avatar-dropdown {
+    background: #1c2230;
+    border: 1.5px solid var(--bg-card-border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.avatar-dropdown[open] {
+    border-color: var(--melb-red);
+    box-shadow: 0 0 14px rgba(238, 39, 55, 0.3);
+}
+
+.avatar-dropdown-summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+}
+
+.avatar-dropdown-summary::-webkit-details-marker {
+    display: none;
+}
+
+.summary-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.summary-icon {
+    font-size: 1.4rem;
+}
+
+.summary-arrow {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+}
+
+.avatar-dropdown[open] .summary-arrow {
+    transform: rotate(180deg);
+}
+
+.avatar-dropdown-content {
+    padding: 10px 14px 14px;
+    max-height: 240px;
+    overflow-y: auto;
+    border-top: 1px solid var(--bg-card-border);
+    background: #141822;
+}
+
+.emoticon-section-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin: 8px 0 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.emoticon-section-label:first-child {
+    margin-top: 2px;
+}
+
+.emoji-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+}
+
+.btn-emoji-select {
+    background: #1c2230;
+    border: 1.5px solid var(--bg-card-border);
+    border-radius: 10px;
+    font-size: 1.35rem;
+    padding: 6px 0;
+    cursor: pointer;
+    transition: transform 0.1s, border-color 0.15s, background 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-emoji-select:hover, .btn-emoji-select.active {
+    border-color: var(--melb-red);
+    background: rgba(238, 39, 55, 0.2);
+    transform: scale(1.1);
+}
+
+.file-upload-dropzone {
+    border: 2px dashed var(--bg-card-border);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: #1c2230;
+}
+
+.file-upload-dropzone:hover {
+    border-color: var(--melb-red);
+    color: #ffffff;
+    background: rgba(238, 39, 55, 0.1);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+.form-input {
+    background: #1c2230;
+    border: 1.5px solid var(--bg-card-border);
+    border-radius: 14px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+    border-color: var(--melb-red);
+    box-shadow: 0 0 0 3px rgba(238, 39, 55, 0.25);
+}
+
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn-role {
+    background: #1c2230;
+    border: 2px solid var(--bg-card-border);
+    border-radius: 16px;
+    padding: 12px 10px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.btn-role:hover {
+    background: #242c3d;
+}
+
+.btn-role.active#role-runner {
+    background: rgba(238, 39, 55, 0.18);
+    border-color: var(--melb-red);
+    color: #ffffff;
+}
+
+.btn-role.active#role-cheer {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, #ee2737, #c01424);
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(238, 39, 55, 0.45);
+    transition: transform 0.15s, opacity 0.2s;
+}
+
+.btn-submit:active {
+    transform: scale(0.98);
+}
+
+/* Runner HUD Fullscreen Modal */
+.hud-card {
+    background: #0c0e12;
+    border: 2px solid var(--melb-red);
+    width: 100%;
+    height: 94vh;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 20px;
+    justify-content: space-between;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+    color: #ffffff;
+}
+
+.hud-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hud-metrics {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.hud-metric-big {
+    text-align: center;
+}
+
+.hud-metric-label {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 1.2px;
+}
+
+.hud-metric-val {
+    font-size: 4.5rem;
+    font-weight: 900;
+    color: #ffffff;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+}
+
+.btn-hud-ptt {
+    width: 100%;
+    background: linear-gradient(135deg, #ee2737, #c01424);
+    border: none;
+    border-radius: 20px;
+    padding: 22px;
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 8px 30px rgba(238, 39, 55, 0.5);
+}
+
+/* Strict Hidden Utility Class */
+.hidden {
+    display: none !important;
+}
+
+/* Reaction Toast - Melbourne Marathon Style */
+.reaction-toast {
+    position: fixed;
+    top: 76px;
+    right: 16px;
+    background: rgba(18, 22, 30, 0.96);
+    backdrop-filter: blur(20px);
+    color: #ffffff;
+    padding: 10px 16px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 0.88rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--bg-card-border);
+    border-left: 4px solid var(--melb-red);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: toastEnter 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 80px;
+    box-sizing: border-box;
+    z-index: 3000;
+}
+
+.reaction-toast.removing {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.9);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: -8px;
+    border-width: 0;
+}
+
+.reaction-toast.toast-target {
+    border-left: 4px solid var(--melb-red);
+}
+
+.reaction-toast.toast-energy {
+    border-left: 4px solid var(--melb-gold);
+}
+
+/* Animations */
+@keyframes radarPulse {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.85); opacity: 0; }
+    70% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulseIcon {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
+}
+
+@keyframes toastEnter {
+    from {
+        transform: translateY(18px) scale(0.92);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Festive Confetti Celebration Layer */
+.festive-confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 14px;
+    border-radius: 2px;
+    opacity: 0.95;
+    animation: confettiFall 2.4s ease-out forwards;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-20px) rotate(0deg) scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg) scale(1.1);
+        opacity: 0;
+    }
+}
+
+/* Floating Interactive GPX Course Legend (Hidden - routes displayed cleanly on map) */
+.map-course-legend {
+    display: none !important;
+}
+
+.course-legend-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding-bottom: 6px;
+}
+
+.course-legend-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #e2e8f0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.course-legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.course-legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.course-legend-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #cbd5e1;
+    cursor: pointer;
+    user-select: none;
+}
+
+.course-legend-label input[type="checkbox"] {
+    accent-color: var(--runner-neon);
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+}
+
+.course-color-pill {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px currentColor;
+}
+
+.course-name-text {
+    white-space: nowrap;
+}
+
+.btn-gpx-download {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #94a3b8;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-gpx-download:hover {
+    background: var(--runner-neon);
+    color: #041018;
+    border-color: var(--runner-neon);
+}
+
+/* POI Milestone Badges along the route */
+.course-poi-marker {
+    background: transparent;
+    border: none;
+}
+
+.poi-badge {
+    background: rgba(15, 23, 42, 0.94);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.poi-badge.finish-badge {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    box-shadow: 0 0 16px rgba(255, 77, 109, 0.5);
+}
+
+/* ==========================================================================
+   Standard Centered Onboarding Card, Minimalist Dashes & Progressive Dimming
+   ========================================================================== */
+
+.join-wizard-card {
+    width: 100%;
+    max-width: 420px;
+    height: 100dvh;
+    max-height: 920px;
+    background: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 32px;
+    padding: 24px 22px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95);
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+@media (max-width: 600px) {
+    .join-wizard-card {
+        width: 100vw;
+        max-width: 100vw;
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+        border: none;
+        padding: calc(env(safe-area-inset-top, 16px) + 12px) 20px calc(env(safe-area-inset-bottom, 16px) + 14px);
+    }
+}
+
+.wizard-top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+}
+
+.wizard-app-brand {
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+    color: #ffffff;
+}
+
+/* Subtle Watermark Branding */
+.wizard-app-brand-watermark {
+    font-size: 0.92rem;
+    font-weight: 800;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.22);
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.wizard-app-brand-watermark:hover {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Sleek Minimalist Grey Admin Pill */
+.btn-admin-pill-grey {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #94a3b8;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.btn-admin-pill-grey:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.btn-admin-pill-grey svg {
+    color: #94a3b8;
+    transition: color 0.2s ease;
+}
+
+.btn-admin-pill-grey:hover svg {
+    color: #ffffff;
+}
+
+/* Top Floating Header Profile Badge */
+.header-profile-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 2px 10px 2px 6px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition: all 0.2s ease;
+}
+
+.header-profile-badge:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+.header-user-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.2px;
+}
+
+/* QR Welcome Banner */
+.qr-welcome-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: linear-gradient(135deg, rgba(238, 39, 55, 0.15), rgba(16, 185, 129, 0.12));
+    border: 1.5px solid rgba(238, 39, 55, 0.4);
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+    margin-top: 10px;
+    animation: bannerPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes bannerPopIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.qr-banner-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.qr-banner-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.qr-banner-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.qr-banner-sub {
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    line-height: 1.35;
+}
+
+.qr-banner-sub strong {
+    color: #39ff14;
+    font-weight: 800;
+}
+
+/* Wizard Step Panels - Full Vertical Center Stage */
+.wizard-step-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px 0;
+    animation: stepFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wizard-step-panel.hidden {
+    display: none !important;
+}
+
+@keyframes stepFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   Screen 1: Two Circles Side-by-Side (Runner & Cheer Squad) - Perfectly Centered
+   ========================================================================== */
+
+#wizard-step-1 {
+    justify-content: space-between;
+    height: 100%;
+}
+
+.screen1-content-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: auto 0;
+    width: 100%;
+}
+
+.screen1-prompt {
+    margin-bottom: 12px;
+}
+
+.screen-headline {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-align: center;
+    letter-spacing: -0.3px;
+}
+
+.screen1-circles-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    margin: 24px 0 16px;
+}
+
+.role-circle-btn {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+    user-select: none;
+}
+
+.role-circle-btn:hover {
+    transform: scale(1.06);
+}
+
+.role-circle-disc {
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    border: 2.5px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.role-circle-emoji {
+    font-size: 2.6rem;
+    line-height: 1;
+}
+
+.role-circle-label {
+    font-family: 'Days One', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #94a3b8;
+    letter-spacing: 0.2px;
+    transition: color 0.2s ease;
+}
+
+.role-circle-btn.active .role-circle-disc {
+    border-color: #ee2737;
+    background: rgba(238, 39, 55, 0.18);
+    box-shadow: 0 0 32px rgba(238, 39, 55, 0.45), inset 0 0 16px rgba(238, 39, 55, 0.2);
+    transform: scale(1.04);
+}
+
+.role-circle-btn.active .role-circle-label {
+    color: #cbd5e1;
+}
+
+/* Cheer Squad Circulado em Vermelho */
+.role-circle-btn[data-role="cheer"].active .role-circle-disc {
+    border-color: #ee2737;
+    background: rgba(238, 39, 55, 0.18);
+    box-shadow: 0 0 32px rgba(238, 39, 55, 0.45), inset 0 0 16px rgba(238, 39, 55, 0.2);
+}
+
+/* Aussie Hype Punchline (Zero Layout Shift, Pure Typography, No Box, No Emoticon) */
+.role-punchline-clean {
+    width: 100%;
+    max-width: 340px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: 8px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+    pointer-events: none;
+}
+
+.role-punchline-clean.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.punchline-text-clean {
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: #94a3b8;
+    line-height: 1.45;
+    letter-spacing: 0.2px;
+    font-style: normal;
+    text-align: center;
+}
+
+#wizard-step-2 {
+    justify-content: flex-start;
+    height: 100%;
+    padding: 10px 0 8px;
+}
+
+.screen2-circle-wrap {
+    width: 106px;
+    height: 106px;
+    margin: 36px auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.preview-circle-disc {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    background: #ee2737;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #ffffff;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+}
+
+.screen2-fields-wrap {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 6px;
+    margin-bottom: 8px;
+}
+
+.field-group-name {
+    width: 100%;
+}
+
+.field-group-room {
+    width: 100%;
+    margin-top: 38px;
+    padding-top: 0;
+}
+
+.screen2-field-label {
+    display: block;
+    text-align: center;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+    color: #64748b;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+/* Searchable Combobox Autocomplete */
+.searchable-combobox-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.searchable-combobox-wrap .screen-input-clean {
+    padding-right: 44px;
+}
+
+.btn-combobox-arrow {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-combobox-arrow:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.combobox-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #0d1624;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 100;
+    padding: 6px;
+    animation: drawerSlideDown 0.2s ease;
+}
+
+.combobox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    color: #cbd5e1;
+    font-size: 0.88rem;
+}
+
+.combobox-item:hover, .combobox-item.active {
+    background: rgba(238, 39, 55, 0.2);
+    color: #ffffff;
+}
+
+.combobox-item-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+.combobox-item-name {
+    flex: 1;
+    font-weight: 600;
+    text-align: left;
+}
+
+.combobox-item-badge {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.combobox-empty {
+    padding: 12px;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+.screen-input-clean {
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+.screen-input-clean:focus {
+    border-color: #ee2737;
+    box-shadow: 0 0 20px rgba(238, 39, 55, 0.35);
+}
+
+.roster-select-clean {
+    font-size: 0.82rem;
+    background: rgba(14, 20, 30, 0.95);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.race-days-toggle-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+}
+
+.race-day-pill {
+    background: rgba(255, 255, 255, 0.04);
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: all 0.2s ease;
+}
+
+.race-day-pill:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.race-day-pill.active {
+    background: rgba(238, 39, 55, 0.18);
+    border-color: #ee2737;
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(238, 39, 55, 0.3);
+}
+
+.pill-day {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.pill-dist {
+    font-size: 0.72rem;
+    color: #cbd5e1;
+}
+
+/* ==========================================================================
+   Screen 3: VIP Athlete Race Pass & Segmented Switcher (Nike / Apple Elite)
+   ========================================================================== */
+
+#wizard-step-3 {
+    justify-content: flex-start;
+    height: 100%;
+    padding: 10px 0 8px;
+}
+
+.screen3-pass-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    margin: 0;
+    padding: 0 0 8px;
+}
+
+/* Hero Avatar Zone: Identical Coordinates to Screen 2 Circle */
+.pass-hero-avatar-zone {
+    position: relative;
+    width: 106px;
+    height: 106px;
+    margin: 36px auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.pass-hero-aura {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(238, 39, 55, 0.4) 0%, rgba(238, 39, 55, 0) 70%);
+    filter: blur(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.pass-hero-disc {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: #ee2737;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.85rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.25s ease;
+    overflow: hidden;
+}
+
+.pass-hero-avatar-zone:active .pass-hero-disc {
+    transform: scale(0.96);
+}
+
+.pass-floating-cam-badge {
+    display: none !important;
+}
+
+/* Athlete Identity Block */
+.pass-identity-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 28px;
+    text-align: center;
+}
+
+.pass-athlete-name {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.2px;
+}
+
+.pass-event-pill-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: #94a3b8;
+}
+
+.pass-event-room {
+    color: #94a3b8;
+    letter-spacing: 0.4px;
+}
+
+.pass-event-dot {
+    opacity: 0.4;
+    font-size: 0.7rem;
+}
+
+.pass-event-role {
+    font-family: 'Days One', sans-serif;
+    color: #cbd5e1;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
+
+.pass-event-role.cheer {
+    color: #cbd5e1;
+}
+
+/* Options Workspace: Anchored into the Lower Half at the exact same baseline as Room */
+.pass-options-workspace {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 38px;
+    padding-top: 0;
+}
+
+/* Segmented Control Pill: Anchored in place */
+.pass-segmented-control {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 30px;
+    padding: 5px;
+    gap: 6px;
+    margin-bottom: 18px;
+    flex-shrink: 0;
+}
+
+.pass-seg-btn {
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 6px 18px;
+    border-radius: 22px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pass-seg-btn.active {
+    background: #ffffff;
+    color: #041018;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Customiser Trays: Fixed Height & Hidden Scrollbar ("Sem Barra") */
+.pass-custom-tray {
+    width: 100%;
+    height: 215px;
+    max-height: 215px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 4px 6px 12px;
+    animation: fadeInTray 0.2s ease;
+}
+
+.pass-custom-tray::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+@keyframes fadeInTray {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 12 Neon Gems in 2 Rows of 6 */
+.neon-gems-palette {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 18px 12px;
+    justify-items: center;
+    width: 100%;
+    max-width: 330px;
+    margin: 0 auto;
+}
+
+.btn-neon-gem {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--gem-color);
+    border: 2.5px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s, box-shadow 0.2s;
+}
+
+.btn-neon-gem.active, .btn-neon-gem:hover {
+    border-color: #ffffff;
+    transform: scale(1.18);
+    box-shadow: 0 0 16px var(--gem-color);
+}
+
+/* 19 Emojis + 1 Shuffle in 4 Rows of 5 items */
+.hype-emojis-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px 12px;
+    justify-items: center;
+    width: 100%;
+    max-width: 330px;
+    margin: 0 auto;
+}
+
+.btn-hype-emoji {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    font-size: 1.45rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-hype-emoji:hover, .btn-hype-emoji.active {
+    background: rgba(238, 39, 55, 0.25);
+    border-color: #ee2737;
+    transform: scale(1.15);
+}
+
+.btn-hype-shuffle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(238, 39, 55, 0.2);
+    border: 1.5px solid rgba(238, 39, 55, 0.5);
+    font-size: 1.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-hype-shuffle:hover {
+    background: #ee2737;
+    transform: rotate(20deg) scale(1.1);
+}
+
+.btn-photo-pill-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 24px;
+    padding: 8px 18px;
+    color: #ffffff;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-photo-pill-action:hover {
+    background: rgba(238, 39, 55, 0.25);
+    border-color: #ee2737;
+}
+
+/* ==========================================================================
+   Unified Bottom Navigation Bar (Exact Match to User Wireframe)
+   [< Back / Admin]         [ o  o  o ]         [ Next > / Start >]
+   ========================================================================== */
+
+.wizard-wireframe-bottom-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 18px 12px 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+}
+
+.bottom-bar-left-zone {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 50px;
+    height: 50px;
+}
+
+.btn-admin-bottom-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #94a3b8;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 16px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-admin-bottom-pill:hover {
+    background: rgba(238, 39, 55, 0.2);
+    border-color: rgba(238, 39, 55, 0.5);
+    color: #ffffff;
+}
+
+.btn-admin-bottom-pill svg {
+    color: #ee2737;
+}
+
+.btn-wireframe-chevron {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-wireframe-chevron:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: scale(1.12);
+}
+
+.btn-wireframe-chevron.invisible {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.btn-chevron-next {
+    color: #ee2737;
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease, background 0.25s ease;
+}
+
+.btn-chevron-next:hover {
+    background: rgba(238, 39, 55, 0.18);
+}
+
+.btn-chevron-next.fade-hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden;
+    transform: translateX(-6px);
+}
+
+.btn-chevron-next.fade-visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.wizard-wireframe-dots {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.wizard-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.wizard-dot:hover {
+    background: rgba(255, 255, 255, 0.45);
+}
+
+.wizard-dot.active {
+    width: 12px;
+    height: 12px;
+    background: #ee2737;
+    box-shadow: 0 0 12px rgba(238, 39, 55, 0.85);
+}
+
+.wizard-dot.completed {
+    background: #ffffff;
+    opacity: 0.85;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
+}
+
+
+

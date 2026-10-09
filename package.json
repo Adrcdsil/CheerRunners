@@ -1,0 +1,24 @@
+{
+  "name": "cheerrunners",
+  "version": "1.0.0",
+  "description": "Live GPS Tracking & Walkie-Talkie Cheering Companion for Runners and Spectators",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "qrcode": "^1.5.4",
+    "ws": "^8.18.0"
+  },
+  "keywords": [
+    "running",
+    "tracker",
+    "walkie-talkie",
+    "cheer",
+    "geolocation",
+    "push-to-talk"
+  ],
+  "author": "CheerRunners Team",
+  "license": "MIT"
+}

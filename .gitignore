@@ -1,0 +1,8 @@
+# CheerRunners Git Ignore
+node_modules/
+__pycache__/
+*.pyc
+*.pdf
+*.log
+.DS_Store
+Thumbs.db

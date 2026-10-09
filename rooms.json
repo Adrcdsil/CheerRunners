@@ -1,0 +1,20 @@
+[
+  {
+    "id": "MM SAT 5 10",
+    "name": "MM SAT 5 10",
+    "description": "Saturday - Dairy Farmers 5km & SriLankan Airlines 10km",
+    "category": "Melbourne Marathon",
+    "date": "Saturday",
+    "distances": "5k, 10k",
+    "createdAt": 1728345600000
+  },
+  {
+    "id": "MM SUN 21 42",
+    "name": "MM SUN 21 42",
+    "description": "Sunday - Nike Half Marathon (21.1km) & Nike Full Marathon (42.2km)",
+    "category": "Melbourne Marathon",
+    "date": "Sunday",
+    "distances": "21.1k, 42.2k",
+    "createdAt": 1728345600000
+  }
+]

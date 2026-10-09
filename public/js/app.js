@@ -187,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Map & HUD Controls
     const btnRecenter = document.getElementById('btn-recenter');
+    const btnHardRefresh = document.getElementById('btn-hard-refresh');
     const btnToggleSim = document.getElementById('btn-toggle-sim');
     const btnToggleHud = document.getElementById('btn-toggle-hud');
     const btnShareRoom = document.getElementById('btn-share-room');
@@ -1468,15 +1469,28 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     syncCourseDialState();
 
-    // Simulation toggle button (helpful for testing on PC)
+    // Hard refresh & app reset button
+    if (btnHardRefresh) {
+        btnHardRefresh.addEventListener('click', () => {
+            const confirmed = window.confirm("We are going to reload the page. OK?");
+            if (confirmed) {
+                window.location.reload(true);
+            }
+        });
+    }
+
+    // Simulation logic (Developer test mode via console: window.toggleGpsSimulation())
     let isSimulating = false;
     let simCompanion = null;
-    btnToggleSim.addEventListener('click', () => {
+    window.toggleGpsSimulation = () => {
         isSimulating = !isSimulating;
         if (isSimulating) {
             locationManager.startSimulation();
-            btnToggleSim.classList.add('active');
-            btnToggleSim.title = 'GPS Simulation: ON (Click to turn OFF)';
+            if (btnToggleSim) {
+                btnToggleSim.classList.add('active');
+                btnToggleSim.title = 'GPS Simulation: ON (Click to turn OFF)';
+            }
+            console.log('[GPS SIMULATION] Started simulated run.');
 
             // Spawn virtual companion Coach Sarah at Pakenham Lakeside for solo 1-to-1 testing
             if (!state.users.has('sim_coach')) {
@@ -1503,8 +1517,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             locationManager.stopTracking();
             locationManager.startTracking();
-            btnToggleSim.classList.remove('active');
-            btnToggleSim.title = 'GPS Simulation: OFF (Click to turn ON)';
+            if (btnToggleSim) {
+                btnToggleSim.classList.remove('active');
+                btnToggleSim.title = 'GPS Simulation: OFF (Click to turn ON)';
+            }
+            console.log('[GPS SIMULATION] Stopped simulation, resumed real GPS tracking.');
 
             // Remove simulated companion if active
             if (state.users.has('sim_coach')) {
@@ -1517,7 +1534,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 usersCountEl.textContent = `${state.users.size + 1} Active`;
             }
         }
-    });
+    };
+    if (btnToggleSim) {
+        btnToggleSim.addEventListener('click', window.toggleGpsSimulation);
+    }
 
     // Share room button
     btnShareRoom.addEventListener('click', () => {

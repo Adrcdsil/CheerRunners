@@ -1,6 +1,6 @@
 {
   "name": "cheerrunners",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Live GPS Tracking & Walkie-Talkie Cheering Companion for Runners and Spectators",
   "main": "server.js",
   "scripts": {

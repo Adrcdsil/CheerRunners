@@ -517,8 +517,8 @@ body, html {
     box-shadow: 0 0 14px rgba(255, 0, 56, 0.5);
 }
 
-/* Demo GPS Simulation Button: Grey OFF, Red ON */
-#btn-toggle-sim {
+/* Hard Refresh & App Reset Button / Simulation Button */
+#btn-hard-refresh, #btn-toggle-sim {
     background: rgba(30, 41, 59, 0.85);
     border: 1.5px solid rgba(148, 163, 184, 0.35);
     color: #94a3b8;
@@ -526,16 +526,21 @@ body, html {
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-#btn-toggle-sim svg {
+#btn-hard-refresh svg, #btn-toggle-sim svg {
     color: #94a3b8;
-    transition: color 0.2s ease, transform 0.25s ease;
+    transition: color 0.2s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-#btn-toggle-sim:hover {
+#btn-hard-refresh:hover, #btn-toggle-sim:hover {
     background: rgba(51, 65, 85, 0.95);
     border-color: rgba(203, 213, 225, 0.5);
     color: #cbd5e1;
     transform: scale(1.08);
+}
+
+#btn-hard-refresh:hover svg {
+    color: #38bdf8;
+    transform: rotate(180deg);
 }
 
 #btn-toggle-sim:hover svg {

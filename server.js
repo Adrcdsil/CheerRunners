@@ -585,7 +585,7 @@ const wss = new WebSocketServer({ server });
 // Rooms map: roomId -> Map(userId -> { ws, user, lastLocation })
 const rooms = new Map();
 
-function broadcastToRoom(roomId, senderId, data, includeSender = false, targetUserId = 'all') {
+function broadcastToRoom(roomId, senderId, data, includeSender = false, targetUserId = 'all', senderWs = null) {
     const room = rooms.get(roomId);
     if (!room) return;
 
@@ -594,7 +594,8 @@ function broadcastToRoom(roomId, senderId, data, includeSender = false, targetUs
     // Group filter: All Runners
     if (targetUserId === 'runners') {
         room.forEach((client, id) => {
-            if (client.user.role === 'runner' && (includeSender || id !== senderId) && client.ws.readyState === WebSocket.OPEN) {
+            const isSender = (id === senderId || (senderWs && client.ws === senderWs));
+            if (client.user.role === 'runner' && (includeSender || !isSender) && client.ws.readyState === WebSocket.OPEN) {
                 client.ws.send(payload);
             }
         });
@@ -604,7 +605,8 @@ function broadcastToRoom(roomId, senderId, data, includeSender = false, targetUs
     // Group filter: Cheer Squad Only
     if (targetUserId === 'cheer') {
         room.forEach((client, id) => {
-            if (client.user.role === 'cheer' && (includeSender || id !== senderId) && client.ws.readyState === WebSocket.OPEN) {
+            const isSender = (id === senderId || (senderWs && client.ws === senderWs));
+            if (client.user.role === 'cheer' && (includeSender || !isSender) && client.ws.readyState === WebSocket.OPEN) {
                 client.ws.send(payload);
             }
         });
@@ -613,8 +615,15 @@ function broadcastToRoom(roomId, senderId, data, includeSender = false, targetUs
 
     // Specific Individual User
     if (targetUserId && targetUserId !== 'all') {
+        // If sender accidentally targeted themselves, never send back when includeSender is false
+        if (!includeSender && (targetUserId === senderId || (data.sender && targetUserId === data.sender.id))) {
+            return;
+        }
         const targetClient = room.get(targetUserId);
         if (targetClient && targetClient.ws.readyState === WebSocket.OPEN) {
+            if (!includeSender && (targetClient.user.id === senderId || (senderWs && targetClient.ws === senderWs))) {
+                return;
+            }
             targetClient.ws.send(payload);
         }
         return;
@@ -622,7 +631,8 @@ function broadcastToRoom(roomId, senderId, data, includeSender = false, targetUs
 
     // Default: Broadcast to entire room
     room.forEach((client, id) => {
-        if ((includeSender || id !== senderId) && client.ws.readyState === WebSocket.OPEN) {
+        const isSender = (id === senderId || (senderWs && client.ws === senderWs));
+        if ((includeSender || !isSender) && client.ws.readyState === WebSocket.OPEN) {
             client.ws.send(payload);
         }
     });
@@ -776,18 +786,19 @@ wss.on('connection', (ws) => {
 
                 case 'audio_message': {
                     if (!currentRoomId || !currentUserId) return;
+                    const effectiveSenderId = data.senderId || currentUserId;
                     const targetId = data.targetUserId || 'all';
-                    console.log(`[AUDIO] Voice note (${data.duration}s) from ${currentUserId} to ${targetId} in room [${currentRoomId}]`);
+                    console.log(`[AUDIO] Voice note (${data.duration}s) from ${effectiveSenderId} to ${targetId} in room [${currentRoomId}]`);
 
                     const audioPayload = {
                         type: 'audio_message',
                         sender: {
-                            id: currentUserId,
-                            name: data.senderName,
-                            role: data.senderRole,
-                            avatarType: data.senderAvatarType,
-                            avatarValue: data.senderAvatarValue,
-                            avatarColor: data.senderAvatarColor
+                            id: effectiveSenderId,
+                            name: data.senderName || currentUserProfile?.name || 'Athlete',
+                            role: data.senderRole || currentUserProfile?.role || 'runner',
+                            avatarType: data.senderAvatarType || currentUserProfile?.avatarType,
+                            avatarValue: data.senderAvatarValue || currentUserProfile?.avatarValue,
+                            avatarColor: data.senderAvatarColor || currentUserProfile?.avatarColor
                         },
                         targetUserId: targetId,
                         audio: data.audio,
@@ -795,7 +806,7 @@ wss.on('connection', (ws) => {
                         timestamp: Date.now()
                     };
 
-                    broadcastToRoom(currentRoomId, currentUserId, audioPayload, false, targetId);
+                    broadcastToRoom(currentRoomId, effectiveSenderId, audioPayload, false, targetId, ws);
                     break;
                 }
 

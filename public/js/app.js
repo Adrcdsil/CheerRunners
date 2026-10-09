@@ -621,9 +621,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function formatRoomShort(roomId) {
+        if (!roomId) return '21/42';
+        const str = String(roomId).toUpperCase();
+        if (str.includes('5') && str.includes('10')) return '5/10';
+        if (str.includes('21') || str.includes('42')) return '21/42';
+        return roomId;
+    }
+
     function updateProfilePreview() {
-        const name = (inputName && inputName.value ? inputName.value.trim() : '') || state.user.name || 'Runner Name';
-        if (headerUserName) headerUserName.textContent = name;
+        const name = (inputName && inputName.value ? inputName.value.trim() : '') || state.user.name || 'Athlete';
+        const firstName = name.trim().split(/\s+/)[0] || 'Athlete';
+        if (headerUserName) headerUserName.textContent = firstName;
+        if (roomBadge) roomBadge.textContent = formatRoomShort(state.roomId);
         if (previewDisplayName) previewDisplayName.textContent = name;
         if (previewDisplayRole) previewDisplayRole.textContent = state.user.role === 'runner' ? '🏃 Runner' : '📣 Cheer Squad';
         if (passNameDisplay) passNameDisplay.textContent = name;
@@ -1225,7 +1235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.user.name && !isQrLogin) {
         inputName.value = state.user.name;
     }
-    roomBadge.textContent = state.roomId;
+    if (roomBadge) roomBadge.textContent = formatRoomShort(state.roomId);
     syncAvatarColorDots();
     updateProfilePreview();
     loadRoomsFromApi();
@@ -1241,6 +1251,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Connect click-to-target on map markers (toggle: click to target, click again to reset to 'all')
     mapManager.onMarkerClick = (targetUser) => {
+        if (!targetUser || targetUser.id === state.user.id || (targetUser.name && state.user.name && targetUser.name.trim().toLowerCase() === state.user.name.trim().toLowerCase())) {
+            return; // Ignore clicking on own marker
+        }
         if (state.selectedTargetUserId === targetUser.id) {
             selectRecipient('all');
             return;
@@ -1292,7 +1305,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         joinModal.classList.add('hidden');
         joinModal.style.setProperty('display', 'none', 'important');
-        if (roomBadge) roomBadge.textContent = state.roomId;
+        if (roomBadge) roomBadge.textContent = formatRoomShort(state.roomId);
         updateProfilePreview();
 
         // Ensure Map is ready and properly sized
@@ -1301,9 +1314,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mapManager && mapManager.map) mapManager.map.invalidateSize();
         }, 150);
 
-        // Connect WebSocket if not yet connected
+        // Connect WebSocket if not yet connected, or sync updated user profile if already open
         if (!state.isConnected) {
             connectWebSocket();
+        } else if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+            state.ws.send(JSON.stringify({
+                type: 'join',
+                roomId: state.roomId,
+                user: state.user
+            }));
         }
 
         // Start GPS automatically upon login
@@ -1312,6 +1331,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize Bluetooth headset buttons & WakeLock
         mediaSessionManager.initMediaSession();
         mediaSessionManager.requestWakeLock();
+
+        // Attempt full-screen mode on user gesture
+        const doc = document.documentElement;
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            if (doc.requestFullscreen) {
+                doc.requestFullscreen().catch(() => {});
+            } else if (doc.webkitRequestFullscreen) {
+                doc.webkitRequestFullscreen();
+            }
+        }
     }
 
     if (btnStart) {
@@ -1462,6 +1491,43 @@ document.addEventListener('DOMContentLoaded', () => {
         hudModal.style.setProperty('display', 'none', 'important');
     });
 
+    // Full-Screen Mode Toggle (Cross-platform with iOS PWA advice)
+    const btnToggleFullscreen = document.getElementById('btn-toggle-fullscreen');
+    const iconFsEnter = document.getElementById('icon-fs-enter');
+    const iconFsExit = document.getElementById('icon-fs-exit');
+
+    function toggleAppFullscreen() {
+        const doc = document.documentElement;
+        const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+        if (!isFs) {
+            if (doc.requestFullscreen) {
+                doc.requestFullscreen().catch(() => {});
+            } else if (doc.webkitRequestFullscreen) {
+                doc.webkitRequestFullscreen();
+            } else {
+                showToastNotification('💡 For true 100% full screen on iOS, tap Share and "Add to Home Screen"');
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
+    }
+
+    if (btnToggleFullscreen) {
+        btnToggleFullscreen.addEventListener('click', toggleAppFullscreen);
+        const updateFsIcons = () => {
+            const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+            if (iconFsEnter) iconFsEnter.style.display = isFs ? 'none' : 'block';
+            if (iconFsExit) iconFsExit.style.setProperty('display', isFs ? 'block' : 'none', 'important');
+            btnToggleFullscreen.classList.toggle('active', isFs);
+        };
+        document.addEventListener('fullscreenchange', updateFsIcons);
+        document.addEventListener('webkitfullscreenchange', updateFsIcons);
+    }
+
     // Hands-Free Bluetooth Earphone Button integration
     mediaSessionManager.onHardwareButtonPressed = () => {
         if (audioManager.isRecording) {
@@ -1480,11 +1546,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentTarget = state.selectedTargetUserId;
         recipientChipsList.innerHTML = '';
 
-        // 1. Everyone (All)
+        // 1. ALL (Broadcast)
         const allBtn = document.createElement('button');
         allBtn.className = `recipient-chip ${currentTarget === 'all' ? 'active' : ''}`;
         allBtn.dataset.target = 'all';
-        allBtn.innerHTML = `<span>📢 Everyone (All)</span>`;
+        allBtn.innerHTML = `<span>📢 ALL</span>`;
         allBtn.addEventListener('click', () => selectRecipient('all'));
         recipientChipsList.appendChild(allBtn);
 
@@ -1501,7 +1567,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const runnersBtn = document.createElement('button');
             runnersBtn.className = `recipient-chip ${currentTarget === 'runners' ? 'active' : ''}`;
             runnersBtn.dataset.target = 'runners';
-            runnersBtn.innerHTML = `<span>🏃 All Runners (${runnersCount})</span>`;
+            runnersBtn.innerHTML = `<span>🏃 Runners (${runnersCount})</span>`;
             runnersBtn.addEventListener('click', () => selectRecipient('runners'));
             recipientChipsList.appendChild(runnersBtn);
         }
@@ -1511,13 +1577,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const cheerBtn = document.createElement('button');
             cheerBtn.className = `recipient-chip ${currentTarget === 'cheer' ? 'active' : ''}`;
             cheerBtn.dataset.target = 'cheer';
-            cheerBtn.innerHTML = `<span>📣 Cheer Squad (${cheerCount})</span>`;
+            cheerBtn.innerHTML = `<span>📣 Cheer (${cheerCount})</span>`;
             cheerBtn.addEventListener('click', () => selectRecipient('cheer'));
             recipientChipsList.appendChild(cheerBtn);
         }
 
-        // 4. Individual teammates (1-to-1 direct messaging)
+        // 4. Individual teammates (1-to-1 direct messaging, exclude self - first name only to save space)
         state.users.forEach((user) => {
+            if (user.id === state.user.id || (user.name && state.user.name && user.name.trim().toLowerCase() === state.user.name.trim().toLowerCase())) {
+                return; // Do not allow targeting oneself
+            }
             const btn = document.createElement('button');
             const isTarget = (currentTarget === user.id);
             btn.className = `recipient-chip chip-direct ${isTarget ? 'active' : ''}`;
@@ -1534,7 +1603,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 avatarMiniHtml = `<span>${user.role === 'runner' ? '🏃' : '📣'}</span>`;
             }
 
-            btn.innerHTML = `${avatarMiniHtml}<span>${user.name}</span>`;
+            const firstName = (user.name || '').trim().split(/\s+/)[0] || 'Runner';
+            btn.innerHTML = `${avatarMiniHtml}<span>${firstName}</span>`;
+            btn.title = user.name;
             btn.addEventListener('click', () => selectRecipient(user.id));
             recipientChipsList.appendChild(btn);
         });
@@ -1553,15 +1624,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateSendButtonLabel() {
         if (state.selectedTargetUserId === 'all') {
-            btnReviewSendLabel.textContent = 'Send to All';
+            btnReviewSendLabel.textContent = 'Send to ALL';
         } else if (state.selectedTargetUserId === 'runners') {
             btnReviewSendLabel.textContent = 'Send to Runners';
         } else if (state.selectedTargetUserId === 'cheer') {
-            btnReviewSendLabel.textContent = 'Send to Cheer Squad';
+            btnReviewSendLabel.textContent = 'Send to Cheer';
         } else {
             const targetUser = state.users.get(state.selectedTargetUserId) ||
                                (state.user && state.user.id === state.selectedTargetUserId ? state.user : null);
-            btnReviewSendLabel.textContent = targetUser ? `Send to ${targetUser.name}` : 'Send';
+            const targetFirstName = targetUser ? (targetUser.name || '').trim().split(/\s+/)[0] : '';
+            btnReviewSendLabel.textContent = targetFirstName ? `Send to ${targetFirstName}` : 'Send';
         }
     }
 
@@ -1674,6 +1746,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: 'audio_message',
                 roomId: state.roomId,
                 targetUserId: state.selectedTargetUserId,
+                senderId: state.user.id,
                 senderName: state.user.name,
                 senderRole: state.user.role,
                 senderAvatarType: state.user.avatarType,
@@ -2019,8 +2092,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         state.ws.onopen = () => {
             state.isConnected = true;
-            connectionStatus.textContent = 'ONLINE';
-            connectionStatus.className = 'status-badge online';
+            if (connectionStatus) {
+                connectionStatus.className = 'connection-antenna-icon online';
+                connectionStatus.title = 'Status: Live Online';
+            }
 
             state.ws.send(JSON.stringify({
                 type: 'join',
@@ -2040,8 +2115,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         state.ws.onclose = () => {
             state.isConnected = false;
-            connectionStatus.textContent = 'DISCONNECTED';
-            connectionStatus.className = 'status-badge offline';
+            if (connectionStatus) {
+                connectionStatus.className = 'connection-antenna-icon offline';
+                connectionStatus.title = 'Status: Offline (Reconnecting...)';
+            }
             setTimeout(connectWebSocket, 3000);
         };
     }
@@ -2104,6 +2181,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             case 'audio_message': {
+                // Safeguard: Never play back or duplicate audio sent by myself
+                const isFromMe = (data.sender && (
+                    data.sender.id === state.user.id ||
+                    (data.sender.name && state.user.name && data.sender.name.trim().toLowerCase() === state.user.name.trim().toLowerCase())
+                ));
+
+                if (isFromMe) {
+                    console.log('[AUDIO] Self-voice message received (ignored to prevent echo duplication).');
+                    break;
+                }
+
                 audioManager.enqueueIncomingMessage(data);
 
                 addFeedItem({
